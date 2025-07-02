@@ -1,0 +1,171 @@
+{
+  "eventos_julio_2025": [
+    {
+      "titulo": "Luis Ángel \"El Flaco\" en Tijuana 2025 - La Ley de la Vida Tour",
+      "fecha": "2025-07-05",
+      "hora": "20:00",
+      "lugar": "Palenque de Tijuana",
+      "direccion": "Av. de los Insurgentes 16000, Rio Tijuana 3ra Etapa, Tijuana, B.C.",
+      "artista_principal": "Luis Ángel El Flaco",
+      "artista_invitado": "Grupo Clasificado",
+      "genero": "Regional Mexicano",
+      "tipo_evento": "Concierto",
+      "estado": "Activo",
+      "precio": "Información disponible en taquilla",
+      "descripcion": "Luis Ángel \"El Flaco\" presentará \"La Ley de la Vida Tour\" en Tijuana, incluyendo canciones como el tema homónimo y otros éxitos como \"El Que Te Amó\" y \"Me Toca Retirarme\"."
+    },
+    {
+      "titulo": "Seis de Copas en Tijuana 2025 - La Séptima Copa Tour",
+      "fecha": "2025-07-11",
+      "hora": "21:00",
+      "lugar": "El Foro",
+      "direccion": "El Foro, Tijuana",
+      "artista_principal": "Seis de Copas (Podcast)",
+      "presentadoras": ["Marisol de la Fuente", "Fernanda Martin", "Diana Wong", "María Bolio", "Mónica Makaco", "Priscila Arias"],
+      "genero": "Podcast en vivo",
+      "tipo_evento": "Show en vivo",
+      "estado": "CANCELADO",
+      "precios": {
+        "piso_central": "$880",
+        "piso_lateral": "$780",
+        "palco_vip": "$680",
+        "palco_lateral": "$600",
+        "club": "$560",
+        "mezzanine": "$530",
+        "palco_mezzanine": "$530",
+        "terraza": "$450",
+        "general": "$450"
+      },
+      "descripcion": "La primera experiencia en vivo del podcast Seis de Copas, con conversaciones sobre relaciones, amistad, amor propio y temas cotidianos."
+    },
+    {
+      "titulo": "Festival de Música Rock en Tijuana 2025",
+      "fecha_inicio": "2025-07-12",
+      "fecha_fin": "2025-07-13",
+      "horario": "12:00 - 21:00",
+      "lugar": "Explanada del Centro Cultural Tijuana (CECUT)",
+      "direccion": "Paseo de los Héroes No. 9350, Zona Urbana Río, Tijuana, Baja California",
+      "tipo_evento": "Festival de Rock",
+      "estado": "Activo",
+      "precio": "Entrada libre",
+      "caracteristicas": ["Familiar", "Pet-friendly", "Gratuito"],
+      "programacion": {
+        "sabado_12_julio": [
+          "Tributo a Caifanes por The Wait",
+          "Tributo a Rock en Español por Rock Trip", 
+          "Tributo a System of a Down por Los Borbotones",
+          "Tributo a Brujería por División del Norte",
+          "Tributo a Héroes del Silencio por Sesión Roja",
+          "Tributo a Gustavo Cerati por Los del Jam",
+          "Tributo a Depeche Mode por Faithful & Devoted"
+        ],
+        "domingo_13_julio": [
+          "Tributo a SODA ESTÉREO x Decadencia",
+          "Tributo a ERIC CLAPTON x Two Dollar $aint",
+          "Tributo a DEFTONES x Morfina",
+          "Tributo a PINK FLOYD & THE DOORS x Pink Dogs",
+          "Tributo a CREEDENCE CLEARWATER x Red Velvet",
+          "Tributo a METALLICA x Disposables Heroes"
+        ]
+      },
+      "descripcion": "Festival gratuito que reunirá a bandas locales rindiendo homenaje a íconos del rock, con ambiente familiar y pet-friendly."
+    },
+    {
+      "titulo": "Un Campamento de Arte Divertido en Tijuana 2025",
+      "fecha_inicio": "2025-07-14",
+      "fecha_fin": "2025-08-09",
+      "horario": "09:00 - 13:30",
+      "dias": "Lunes a viernes",
+      "lugar": "Centro Cultural Tijuana (CECUT)",
+      "direccion": "Paseo de los Héroes 9350, Zona Urbana Río Tijuana",
+      "tipo_evento": "Campamento de verano",
+      "edad_target": "6 a 12 años",
+      "estado": "Activo",
+      "organizador": "Centro Cultural Tijuana (CECUT)",
+      "contacto": {
+        "telefono": "(664) 687 9646 ext. 48",
+        "email": "[email protected]"
+      },
+      "actividades": [
+        "Danza",
+        "Teatro", 
+        "Ajedrez",
+        "Artes plásticas",
+        "Cuentacuentos",
+        "Recorridos por exposiciones de arte",
+        "Visitas al acuario",
+        "Proyecciones en el Domo IMAX",
+        "Espectáculos culturales"
+      ],
+      "descripcion": "Campamento de verano para niños de 6 a 12 años con talleres artísticos y actividades culturales en un entorno seguro y estimulante."
+    },
+    {
+      "titulo": "Comic-Con San Diego 2025",
+      "fecha_inicio": "2025-07-24",
+      "fecha_fin": "2025-07-27",
+      "lugar": "Centro de Convenciones de San Diego",
+      "direccion": "San Diego Convention Center, San Diego, California",
+      "tipo_evento": "Convención",
+      "estado": "Activo",
+      "temas": ["Cómics", "Cine", "Videojuegos", "Entretenimiento"],
+      "descripcion": "La convención más grande de cómics y entretenimiento que reúne a fans, creadores y estrellas del cine, cómics, videojuegos y más.",
+      "nota": "Próximamente más detalles del evento"
+    },
+    {
+      "titulo": "Susana Zabaleta y Rodrigo de la Cadena en Tijuana 2025",
+      "fecha": "2025-07-26",
+      "hora": "20:00",
+      "lugar": "Centro Cultural Tijuana (CECUT)",
+      "direccion": "Paseo de los Héroes 9350, Zona Urbana Río Tijuana",
+      "artistas": ["Susana Zabaleta", "Rodrigo de la Cadena"],
+      "genero": "Boleros y música romántica",
+      "tipo_evento": "Concierto",
+      "estado": "Activo",
+      "duracion_estimada": "2 horas",
+      "precios": {
+        "plata": "$1,200",
+        "oro": "$1,800", 
+        "vip": "$2,500"
+      },
+      "venta_boletos": "NewTicket",
+      "repertorio_destacado": ["Bésame Mucho", "Somos Novios"],
+      "gira": "10 La Gira Perfecta",
+      "reconocimientos": {
+        "susana_zabaleta": "Premio Mundial del Bolero 2024"
+      },
+      "descripcion": "Concierto de boleros y clásicos románticos interpretados por dos de los intérpretes más reconocidos del género."
+    },
+    {
+      "titulo": "¿Y dónde está el policía? - Estreno en cines",
+      "fecha": "2025-07-31",
+      "tipo_evento": "Estreno cinematográfico",
+      "genero": "Película",
+      "actor_principal": "Liam Neeson",
+      "lugar": "Cines de Tijuana",
+      "estado": "Programado",
+      "descripcion": "Estreno de la película protagonizada por Liam Neeson en los cines de Tijuana."
+    }
+  ],
+  "resumen": {
+    "total_eventos": 7,
+    "eventos_activos": 5,
+    "eventos_cancelados": 1,
+    "eventos_gratuitos": 1,
+    "tipos_eventos": [
+      "Conciertos",
+      "Festival",
+      "Campamento de verano", 
+      "Convención",
+      "Estreno cinematográfico",
+      "Show en vivo"
+    ],
+    "venues_principales": [
+      "Centro Cultural Tijuana (CECUT)",
+      "Palenque de Tijuana",
+      "El Foro",
+      "Centro de Convenciones de San Diego"
+    ]
+  },
+  "fuente": "tijuanaeventos.com",
+  "fecha_actualizacion": "2025-07-02"
+}
