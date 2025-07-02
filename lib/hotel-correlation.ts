@@ -30,7 +30,7 @@ export interface Event {
   genero?: string;
   tipo_evento?: string;
   estado?: string;
-  precios?: Record<string, string>;
+  precios?: Record<string, string | undefined>;
   capacidad?: number;
   precio?: string;
   artistas?: string[];
