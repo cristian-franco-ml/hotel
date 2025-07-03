@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from "../components/theme-provider";
-import { ThemeSwitcher } from "../components/theme-switcher";
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Hotel Dashboard',
+  description: 'Dashboard de correlación de precios hoteleros con eventos',
+  generator: 'Next.js',
 }
 
 export default function RootLayout({
@@ -15,12 +14,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="es" suppressHydrationWarning>
+      <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div style={{ padding: '1rem' }}>
-            <ThemeSwitcher />
-          </div>
           {children}
         </ThemeProvider>
       </body>

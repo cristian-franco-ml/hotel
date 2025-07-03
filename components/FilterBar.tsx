@@ -33,10 +33,10 @@ export function FilterBar({
   return (
     <div className="w-full bg-blue-900/80 rounded-2xl p-4 flex flex-col gap-4 md:flex-row md:items-center md:gap-6 shadow-md mb-6">
       <div className="flex-1 min-w-[180px]">
-        <label className="block text-xs text-blue-100 mb-1">Main Hotel</label>
+        <label className="block text-xs text-blue-100 mb-1">Hotel principal</label>
         <Select value={selectedHotel} onValueChange={onHotelChange}>
           <SelectTrigger className="w-full bg-blue-800 text-blue-100 border-blue-700">
-            <SelectValue placeholder="Select hotel" />
+            <SelectValue placeholder="Selecciona hotel" />
           </SelectTrigger>
           <SelectContent>
             {hoteles.map((hotel) => (
@@ -46,13 +46,13 @@ export function FilterBar({
         </Select>
       </div>
       <div className="flex-1 min-w-[180px]">
-        <label className="block text-xs text-blue-100 mb-1">Room Type</label>
+        <label className="block text-xs text-blue-100 mb-1">Tipo de habitación</label>
         <Select value={selectedHabitacion} onValueChange={onHabitacionChange}>
           <SelectTrigger className="w-full bg-blue-800 text-blue-100 border-blue-700">
-            <SelectValue placeholder="Select type" />
+            <SelectValue placeholder="Selecciona tipo" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="All">All</SelectItem>
+            <SelectItem value="All">Todas</SelectItem>
             {habitaciones.map((h) => (
               <SelectItem key={h} value={h}>{h}</SelectItem>
             ))}
@@ -60,31 +60,31 @@ export function FilterBar({
         </Select>
       </div>
       <div className="flex-1 min-w-[180px]">
-        <label className="block text-xs text-blue-100 mb-1">Date Range</label>
+        <label className="block text-xs text-blue-100 mb-1">Rango de fechas</label>
         <Select value={selectedRangoFechas} onValueChange={onRangoFechasChange}>
           <SelectTrigger className="w-full bg-blue-800 text-blue-100 border-blue-700">
-            <SelectValue placeholder="Select range" />
+            <SelectValue placeholder="Selecciona rango" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="day">Day</SelectItem>
-            <SelectItem value="week1">Week 1 (Jul 1-7)</SelectItem>
-            <SelectItem value="week2">Week 2 (Jul 8-14)</SelectItem>
-            <SelectItem value="week3">Week 3 (Jul 15-21)</SelectItem>
-            <SelectItem value="week4">Week 4 (Jul 22-31)</SelectItem>
-            <SelectItem value="month">Month</SelectItem>
+            <SelectItem value="day">Día</SelectItem>
+            <SelectItem value="week1">Semana 1 (1-7 Jul)</SelectItem>
+            <SelectItem value="week2">Semana 2 (8-14 Jul)</SelectItem>
+            <SelectItem value="week3">Semana 3 (15-21 Jul)</SelectItem>
+            <SelectItem value="week4">Semana 4 (22-31 Jul)</SelectItem>
+            <SelectItem value="month">Mes</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div className="flex-1 min-w-[180px]">
-        <label className="block text-xs text-blue-100 mb-1">Event Type</label>
+        <label className="block text-xs text-blue-100 mb-1">Tipo de evento</label>
         <Select value={selectedTipoEvento} onValueChange={onTipoEventoChange}>
           <SelectTrigger className="w-full bg-blue-800 text-blue-100 border-blue-700">
-            <SelectValue placeholder="Select type" />
+            <SelectValue placeholder="Selecciona tipo" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="todos">All</SelectItem>
-            <SelectItem value="con-eventos">With events</SelectItem>
-            <SelectItem value="sin-eventos">Without events</SelectItem>
+            <SelectItem value="todos">Todos</SelectItem>
+            <SelectItem value="con-eventos">Con eventos</SelectItem>
+            <SelectItem value="sin-eventos">Sin eventos</SelectItem>
           </SelectContent>
         </Select>
       </div>

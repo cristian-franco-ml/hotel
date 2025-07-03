@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Calendar, TrendingUp, Building2, Star, Filter, BarChart3 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -11,6 +10,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import hotelData from "../data/hotels-complete.json"
 import eventsData from "../data/tijuana_july_events.json"
 import { calcularAjustesParaHoteles, Hotel, AjusteResultado } from "../lib/hotel-correlation"
+import { Calendar, Filter, BarChart3, Building2, Star } from "lucide-react"
 
 type EventExt = {
   attendees?: number;
@@ -396,13 +396,13 @@ export default function EnhancedHotelDashboard() {
                 .filter(ajuste => fechasFiltradas.includes(ajuste.date))
                 .map((ajuste) => {
                   const evento = getEventoParaAjuste(ajuste)
-                  return (
+                    return (
                     <div key={ajuste.roomType + ajuste.date} className="p-4 bg-white rounded-lg mb-2 border">
                       <div className="flex justify-between items-center">
                         <div>
                           <div className="font-semibold text-blue-700">{ajuste.roomType}</div>
                           <div className="text-xs text-gray-500">Fecha: {ajuste.date}</div>
-                        </div>
+                            </div>
                         <div className="text-right">
                           <div className="text-lg font-bold text-blue-600">${ajuste.precioAjustado}</div>
                           <div className="text-xs text-gray-500 line-through">${ajuste.precioOriginal}</div>
@@ -435,10 +435,10 @@ export default function EnhancedHotelDashboard() {
                             ))}
                           </>
                         )}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
               <Button className="w-full bg-blue-600 hover:bg-blue-700">Seleccionar {primaryHotel}</Button>
             </CardContent>
           </Card>
@@ -478,11 +478,11 @@ export default function EnhancedHotelDashboard() {
                             </div>
                             <div className="text-right">
                               <div className="text-lg font-bold text-gray-900">${priceObj.price}</div>
-                            </div>
-                          </div>
+                  </div>
+                </div>
                         ) : null
                       })}
-                    </div>
+                </div>
                   ))}
               </CardContent>
             </Card>

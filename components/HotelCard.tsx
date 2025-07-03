@@ -11,6 +11,8 @@ interface HotelCardProps {
   porcentajeAjuste: number
   razon: string
   principal?: boolean
+  comparacionBarato?: { nombre: string; precio: number }
+  comparacionCaro?: { nombre: string; precio: number }
 }
 
 export function HotelCard({
@@ -22,6 +24,8 @@ export function HotelCard({
   porcentajeAjuste,
   razon,
   principal = false,
+  comparacionBarato,
+  comparacionCaro,
 }: HotelCardProps) {
   return (
     <Card className={`rounded-2xl shadow-md border transition-shadow w-full max-w-sm mx-auto ${principal ? "bg-blue-50 border-blue-400" : "bg-white border-gray-200"}`}>
@@ -50,6 +54,23 @@ export function HotelCard({
             {porcentajeAjuste >= 0 ? "+" : ""}{porcentajeAjuste.toFixed(1)}%
           </div>
         </div>
+        {/* Comparación rápida con el más barato y más caro */}
+        {principal && comparacionBarato && comparacionCaro && (
+          <div className="flex flex-col gap-1 mt-2">
+            <div className="flex items-center gap-2 text-xs">
+              <span>Vs. más barato ({comparacionBarato.nombre}):</span>
+              <span className={`font-bold ${precioFinal < comparacionBarato.precio ? "text-green-700" : precioFinal > comparacionBarato.precio ? "text-red-700" : "text-gray-700"}`}>
+                {precioFinal === comparacionBarato.precio ? "Igual" : `$${Math.abs(precioFinal - comparacionBarato.precio).toFixed(2)} ${precioFinal < comparacionBarato.precio ? "más barato" : "más caro"}`}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span>Vs. más caro ({comparacionCaro.nombre}):</span>
+              <span className={`font-bold ${precioFinal > comparacionCaro.precio ? "text-green-700" : precioFinal < comparacionCaro.precio ? "text-red-700" : "text-gray-700"}`}>
+                {precioFinal === comparacionCaro.precio ? "Igual" : `$${Math.abs(precioFinal - comparacionCaro.precio).toFixed(2)} ${precioFinal > comparacionCaro.precio ? "más caro" : "más barato"}`}
+              </span>
+            </div>
+          </div>
+        )}
         <CardDescription className="mt-1 text-xs text-gray-700 dark:text-gray-300">
           {razon}
         </CardDescription>

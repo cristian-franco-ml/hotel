@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import hotelData from "../data/hotels.json"
+import hotelData from "../data/hotels-complete.json"
 
 // Mock events data for demonstration
 const mockEvents = {
@@ -82,33 +82,32 @@ export default function HotelDashboard() {
   const [selectedSource, setSelectedSource] = useState<string>("all")
   const [selectedDate, setSelectedDate] = useState<string>("2025-07-01")
 
-  const hotels = hotelData.hoteles
-  const uniqueHotels = hotels.map((h) => h.nombre)
-  const uniqueSources = [...new Set(hotels.flatMap((h) => h.datos.map((d) => d.fuente)))]
+  const hotels = hotelData.data.hotels
+  const uniqueHotels = hotels.map((h) => h.name)
+  const uniqueSources = [
+    ...new Set(
+      hotels
+        .map((h) => h.source)
+        .filter((source) => typeof source === "string" && source.length > 0)
+    ),
+  ]
 
   const filteredData = useMemo(() => {
     return hotels
-      .filter((hotel) => selectedHotel === "all" || hotel.nombre === selectedHotel)
+      .filter((hotel) => selectedHotel === "all" || hotel.name === selectedHotel)
+      .filter((hotel) => selectedSource === "all" || hotel.source === selectedSource)
       .map((hotel) => {
-        const dateData = hotel.datos.find((d) => d.fecha === selectedDate)
-        if (!dateData) return null
-
-        const event = mockEvents[selectedDate as keyof typeof mockEvents]
-        const basePrice = dateData.suite * 20
-        const suggestedPrice = calculateSuggestedPrice(dateData.suite, selectedDate)
-        const roomPrices = generateRoomPrices(basePrice)
-
+        const mainRoom = hotel.rooms[0]
+        const priceObj = mainRoom.prices.find((p) => p.date === selectedDate)
+        if (!priceObj) return null
         return {
           ...hotel,
-          dateData,
-          event,
-          basePrice,
-          suggestedPrice,
-          roomPrices,
+          mainRoomType: mainRoom.type,
+          price: priceObj.price,
+          date: priceObj.date,
         }
       })
       .filter(Boolean)
-      .filter((hotel) => selectedSource === "all" || hotel?.dateData.fuente === selectedSource)
   }, [selectedHotel, selectedSource, selectedDate, hotels])
 
   return (
@@ -201,130 +200,77 @@ export default function HotelDashboard() {
           </CardContent>
         </Card>
 
-        {/* Results Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredData.map((hotel) => (
-            <Card
-              key={`${hotel.nombre}-${selectedDate}`}
-              className="rounded-2xl shadow-md bg-white p-6 hover:shadow-lg transition-shadow"
-            >
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <Building2 className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{formatHotelName(hotel.nombre)}</h3>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">
-                          {hotel.dateData.fuente}
-                        </Badge>
-                        <span className="text-sm text-gray-500">
-                          {new Date(selectedDate).toLocaleDateString("es-MX", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium">4.2</span>
-                  </div>
+        {/* Results Grid con agrupamiento por rango de precio */}
+        {(() => {
+          // Agrupa hoteles por rango de precio
+          const groups = [
+            {
+              label: "Menores a $1,700 MXN",
+              icon: "💰",
+              color: "text-green-600 border-b-2 border-green-400",
+              filter: (h: any) => h.price < 1700,
+            },
+            {
+              label: "Entre $1,700 y $2,600 MXN",
+              icon: "💼",
+              color: "text-yellow-600 border-b-2 border-yellow-400",
+              filter: (h: any) => h.price >= 1700 && h.price <= 2600,
+            },
+            {
+              label: "Mayores a $2,600 MXN",
+              icon: "🔝",
+              color: "text-red-600 border-b-2 border-red-400",
+              filter: (h: any) => h.price > 2600,
+            },
+          ];
+          return groups.map((group) => {
+            const hotelsInGroup = filteredData.filter((h) => h && group.filter(h));
+            if (hotelsInGroup.length === 0) return null;
+            // Insights del grupo
+            const avg = hotelsInGroup.reduce((acc, h) => acc + (h ? h.price : 0), 0) / hotelsInGroup.length;
+            const withEvent = hotelsInGroup.filter(h => h && h.date && Object.prototype.hasOwnProperty.call(mockEvents, h.date));
+            return (
+              <div key={group.label} className="mb-10">
+                {/* Encabezado de grupo */}
+                <div className={`flex items-center gap-2 mb-2 pb-1 ${group.color}`}> 
+                  <span className="text-xl">{group.icon}</span>
+                  <span className="font-bold text-lg tracking-tight">{group.label}</span>
                 </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {/* Pricing Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600">Standard Price</span>
-                    <span className="text-lg font-semibold text-gray-900">{formatPrice(hotel.dateData.suite)}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <Lightbulb className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-900">Suggested Price</span>
-                    </div>
-                    <span className="text-lg font-bold text-blue-900">{formatPrice(hotel.suggestedPrice / 20)}</span>
-                  </div>
-
-                  {/* Room Types */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-gray-700">Room Prices</h4>
-                    <div className="grid grid-cols-3 gap-2 text-sm">
-                      <div className="text-center p-2 bg-gray-50 rounded-lg">
-                        <div className="font-medium text-gray-900">Double</div>
-                        <div className="text-gray-600">{formatPrice(hotel.roomPrices.doble / 20)}</div>
-                      </div>
-                      <div className="text-center p-2 bg-gray-50 rounded-lg">
-                        <div className="font-medium text-gray-900">Queen</div>
-                        <div className="text-gray-600">{formatPrice(hotel.roomPrices.queen / 20)}</div>
-                      </div>
-                      <div className="text-center p-2 bg-gray-50 rounded-lg">
-                        <div className="font-medium text-gray-900">Suite</div>
-                        <div className="text-gray-600">{formatPrice(hotel.roomPrices.suite / 20)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Event Information */}
-                {hotel.event && (
-                  <div className="border-t pt-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-gray-700">Local Event</h4>
-                      <Badge className={getImpactColor(hotel.event.impact)}>
-                        {hotel.event.impact.toUpperCase()} Impact
-                      </Badge>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-900">{hotel.event.name}</span>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{hotel.event.address}</span>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Users className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {hotel.event.attendees.toLocaleString()} attendees
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                      <div className="flex items-start space-x-2">
-                        <TrendingUp className="w-4 h-4 text-amber-600 mt-0.5" />
-                        <div className="text-sm">
-                          <div className="font-medium text-amber-900">Price Recommendation</div>
-                          <div className="text-amber-700 mt-1">
-                            Increase by {Math.round(((hotel.suggestedPrice - hotel.basePrice) / hotel.basePrice) * 100)}
-                            % due to {hotel.event.impact} impact event with {hotel.event.attendees.toLocaleString()}{" "}
-                            attendees.
-                          </div>
+                {/* Insight destacado */}
+                <Card className="mb-4 bg-gray-50 border-0">
+                  <CardContent className="py-3 flex flex-wrap gap-4 items-center text-sm">
+                    <span><b className="text-blue-700 font-bold">{hotelsInGroup.length}</b> hoteles</span>
+                    <span><b className="text-green-700 font-bold">{withEvent.length}</b> con evento activo</span>
+                    <span>promedio: <b className="text-indigo-700 font-bold">{formatPrice(avg)}</b></span>
+                  </CardContent>
+                </Card>
+                {/* Grid de cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {hotelsInGroup.map((hotel) => hotel && (
+                    <Card key={`${hotel.name}-${hotel.date}`} className="rounded-2xl shadow-md bg-white p-6 hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          {formatHotelName(hotel.name)}
+                        </CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge variant="secondary" className="text-xs">{hotel.source}</Badge>
+                          <span className="text-sm text-gray-500">{hotel.mainRoomType}</span>
+                          <span className="text-sm text-gray-500">{hotel.date}</span>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Button */}
-                <Button className="w-full" variant="default">
-                  Select This Hotel
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-600">Precio</span>
+                          <span className="text-lg font-semibold text-gray-900">{formatPrice(hotel.price)}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+          });
+        })()}
 
         {filteredData.length === 0 && (
           <div className="text-center py-12">
