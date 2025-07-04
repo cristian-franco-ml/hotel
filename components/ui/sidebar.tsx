@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, ChevronLeft, ChevronRight, Home, BarChart3, Calendar, Settings, HelpCircle, Building2, TrendingUp, Filter, Bell, Bookmark } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -156,108 +156,132 @@ const SidebarProvider = React.forwardRef<
 )
 SidebarProvider.displayName = "SidebarProvider"
 
-const Sidebar = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> & {
-    side?: "left" | "right"
-    variant?: "sidebar" | "floating" | "inset"
-    collapsible?: "offcanvas" | "icon" | "none"
-  }
->(
-  (
-    {
-      side = "left",
-      variant = "sidebar",
-      collapsible = "offcanvas",
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+interface SidebarProps {
+  className?: string;
+  isCollapsed?: boolean;
+  onToggle?: (collapsed: boolean) => void;
+  currentSection?: string;
+  onSectionChange?: (section: string) => void;
+}
 
-    if (collapsible === "none") {
-      return (
-        <div
-          className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
-            className
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </div>
-      )
-    }
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href?: string;
+  badge?: string;
+  isActive?: boolean;
+}
 
-    if (isMobile) {
-      return (
-        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-          <SheetContent
-            data-sidebar="sidebar"
-            data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
-            side={side}
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
-      )
-    }
+const navigationItems: NavItem[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: Home },
+  { id: 'analysis', label: 'Análisis', icon: BarChart3, badge: '2' },
+  { id: 'hotels', label: 'Hoteles', icon: Building2 },
+  { id: 'events', label: 'Eventos', icon: Calendar },
+  { id: 'trends', label: 'Tendencias', icon: TrendingUp },
+  { id: 'filters', label: 'Filtros', icon: Filter },
+  { id: 'bookmarks', label: 'Favoritos', icon: Bookmark },
+  { id: 'alerts', label: 'Alertas', icon: Bell, badge: '3' },
+  { id: 'settings', label: 'Configuración', icon: Settings },
+  { id: 'help', label: 'Ayuda', icon: HelpCircle },
+];
 
-    return (
-      <div
-        ref={ref}
-        className="group peer hidden md:block text-sidebar-foreground"
-        data-state={state}
-        data-collapsible={state === "collapsed" ? collapsible : ""}
-        data-variant={variant}
-        data-side={side}
-      >
-        {/* This is what handles the sidebar gap on desktop */}
-        <div
-          className={cn(
-            "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
-            "group-data-[collapsible=offcanvas]:w-0",
-            "group-data-[side=right]:rotate-180",
-            variant === "floating" || variant === "inset"
-              ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
-          )}
-        />
-        <div
-          className={cn(
-            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            side === "left"
-              ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
-              : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
-            // Adjust the padding for floating and inset variants.
-            variant === "floating" || variant === "inset"
-              ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
-            className
-          )}
-          {...props}
-        >
-          <div
-            data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
-          >
-            {children}
+export const Sidebar: React.FC<SidebarProps> = ({
+  className,
+  isCollapsed = false,
+  onToggle,
+  currentSection = 'dashboard',
+  onSectionChange
+}) => {
+  const [collapsed, setCollapsed] = React.useState(isCollapsed);
+
+  const handleToggle = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    onToggle?.(newCollapsed);
+  };
+
+  const handleSectionClick = (sectionId: string) => {
+    onSectionChange?.(sectionId);
+  };
+
+  return (
+    <div className={cn(
+      'relative flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300',
+      collapsed ? 'w-16' : 'w-64',
+      className
+    )}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+        {!collapsed && (
+          <div className="flex items-center space-x-2">
+            <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <span className="font-semibold text-gray-900 dark:text-white">
+              Hotel Dashboard
+            </span>
           </div>
-        </div>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleToggle}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
       </div>
-    )
-  }
-)
-Sidebar.displayName = "Sidebar"
+
+      {/* Navigation */}
+      <nav className="flex-1 py-4">
+        <div className="space-y-1 px-2">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentSection === item.id;
+            
+            return (
+              <Button
+                key={item.id}
+                variant={isActive ? 'default' : 'ghost'}
+                className={cn(
+                  'w-full justify-start h-10 px-3',
+                  collapsed && 'justify-center px-2',
+                  isActive && 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700'
+                )}
+                onClick={() => handleSectionClick(item.id)}
+              >
+                <Icon className={cn('h-4 w-4', !collapsed && 'mr-3')} />
+                {!collapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.badge && (
+                      <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+              </Button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        {!collapsed && (
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            <p>Hotel Dashboard v2.0</p>
+            <p>Correlación de eventos</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,

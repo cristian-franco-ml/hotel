@@ -414,4 +414,6 @@ class SistemaAutomatizado {
     detenerMonitoreo() {
         this.intervalos.forEach((interval, nombre) => {
             clearInterval(interval);
-            console.log(`Monitoreo ${nombre}
+            console.log(`Monitoreo ${nombre} detenido`);
+        });
+    }

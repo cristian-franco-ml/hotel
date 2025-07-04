@@ -22,41 +22,8 @@ import { HotelMap } from "@/components/HotelMap";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sun, Moon } from "lucide-react";
-import RealHotelDashboard from '../components/real-hotel-dashboard'
-
-const getAllRoomTypes = (hotels: Hotel[]) => {
-  const set = new Set<string>();
-  hotels.forEach(h => h.rooms.forEach(r => set.add(r.type)));
-  return Array.from(set);
-};
-
-const getAllDates = (hotels: Hotel[]) => {
-  const set = new Set<string>();
-  hotels.forEach(h => h.rooms.forEach(r => r.prices.forEach(p => set.add(p.date))));
-  return Array.from(set).sort();
-};
-
-// Helper para semanas
-const weekRanges = {
-  week1: ["2025-07-01", "2025-07-07"],
-  week2: ["2025-07-08", "2025-07-14"],
-  week3: ["2025-07-15", "2025-07-21"],
-  week4: ["2025-07-22", "2025-07-31"],
-};
-
-// Limpieza de eventos: asegurar que todos los precios sean string y eliminar claves undefined
-function cleanEvents(events: any[]): Event[] {
-  return events.map(e => {
-    if (!e.precios) return e;
-    const cleanPrecios: Record<string, string> = {};
-    for (const key of Object.keys(e.precios)) {
-      const val = e.precios[key];
-      if (val !== undefined) cleanPrecios[key] = String(val);
-    }
-    return { ...e, precios: cleanPrecios };
-  });
-}
+import { TabbedDashboard } from '../components/TabbedDashboard'
 
 export default function Home() {
-  return <RealHotelDashboard />
+  return <TabbedDashboard />
 }

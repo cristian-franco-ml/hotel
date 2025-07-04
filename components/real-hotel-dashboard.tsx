@@ -627,7 +627,7 @@ const RealHotelDashboard: React.FC = () => {
   }, [filteredProcessedWithCorrelation, uniqueRoomTypes]);
 
   return (
-    <Layout>
+    <div>
       {/* Estadísticas del Sistema de Correlación */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-blue-200 dark:border-blue-700">
@@ -1013,7 +1013,7 @@ const RealHotelDashboard: React.FC = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </Layout>
+    </div>
   );
 };
 
