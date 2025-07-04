@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import RealHotelDashboard from "./real-hotel-dashboard";
 import { PriceCalendar } from "./PriceCalendar";
+import { HotelsManagement } from "./HotelsManagement";
 
 interface TabbedDashboardProps {
   // Props para pasar datos a las diferentes pestañas
@@ -89,19 +90,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
               </p>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5" />
-                  Lista de Hoteles
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Contenido de la gestión de hoteles se implementará aquí...
-                </p>
-              </CardContent>
-            </Card>
+            <HotelsManagement />
           </TabsContent>
 
           {/* Pestaña de Precios */}
