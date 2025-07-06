@@ -14,6 +14,9 @@ import {
 import RealHotelDashboard from "./real-hotel-dashboard";
 import { PriceCalendar } from "./PriceCalendar";
 import { HotelsManagement } from "./HotelsManagement";
+import { PricingAnalysis } from "./PricingAnalysis";
+import { EventsManagement } from "./EventsManagement";
+import { AdvancedAnalytics } from "./AdvancedAnalytics";
 
 interface TabbedDashboardProps {
   // Props para pasar datos a las diferentes pestañas
@@ -104,19 +107,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
               </p>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" />
-                  Comparación de Precios
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Contenido del análisis de precios se implementará aquí...
-                </p>
-              </CardContent>
-            </Card>
+            <PricingAnalysis />
           </TabsContent>
 
           {/* Pestaña de Calendario */}
@@ -144,19 +135,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
               </p>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Eventos de Julio 2025
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Contenido de la gestión de eventos se implementará aquí...
-                </p>
-              </CardContent>
-            </Card>
+            <EventsManagement />
           </TabsContent>
 
           {/* Pestaña de Análisis */}
@@ -170,19 +149,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
               </p>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Tendencias y Reportes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Contenido del análisis avanzado se implementará aquí...
-                </p>
-              </CardContent>
-            </Card>
+            <AdvancedAnalytics />
           </TabsContent>
         </Tabs>
       </main>
