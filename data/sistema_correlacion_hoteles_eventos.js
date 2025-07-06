@@ -293,6 +293,13 @@ class HotelEventCorrelationSystem {
         this.eventos = await this.obtenerEventosTijuana();
     }
 
+    // Función para obtener eventos de Tijuana (placeholder)
+    async obtenerEventosTijuana() {
+        // Aquí integrarías con la API real de tijuanaeventos.com
+        // Por ahora retornamos un array vacío
+        return [];
+    }
+
     // Cargar datos de hoteles
     cargarHoteles(hotelesJSON) {
         this.hoteles = hotelesJSON;
@@ -417,3 +424,10 @@ class SistemaAutomatizado {
             console.log(`Monitoreo ${nombre} detenido`);
         });
     }
+}
+
+// Exportar las clases para uso en otros módulos
+module.exports = {
+    HotelEventCorrelationSystem,
+    SistemaAutomatizado
+};
