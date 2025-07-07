@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,24 +17,23 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
-  Zap
+  Zap,
+  Loader2,
+  Star
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid } from "recharts";
-import hotelData from "../data/hotels-complete.json";
-import eventsData from "../data/tijuana_july_events.json";
+import { useLiveData } from "@/hooks/use-live-data";
 
 interface PricingAnalysisProps {
   selectedHotel?: string;
-  selectedRoomType?: string;
 }
 
 export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
-  selectedHotel = "Grand Hotel Tijuana",
-  selectedRoomType = "Suite"
+  selectedHotel = "Grand Hotel Tijuana"
 }) => {
+  const { hotels, events, eventsEventbrite, eventsTijuanaEventos, loading, error } = useLiveData();
   const [currentHotel, setCurrentHotel] = useState(selectedHotel);
-  const [currentRoomType, setCurrentRoomType] = useState(selectedRoomType);
-  const [comparisonMode, setComparisonMode] = useState<"hotels" | "dates" | "events">("hotels");
+  const [comparisonMode, setComparisonMode] = useState<"hotels" | "events" | "analytics">("hotels");
 
   // Función para formatear precios en pesos mexicanos
   const USD_TO_MXN = 18; // Tipo de cambio fijo, actualízalo según sea necesario
@@ -46,141 +47,128 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
     }).format(priceMXN);
   };
 
-  const hotels = hotelData.data.hotels;
-  const events = eventsData.eventos_julio_2025;
-
-  // Obtener tipos de habitación únicos
-  const roomTypes = useMemo(() => {
-    const types = new Set<string>();
-    hotels.forEach(hotel => {
-      hotel.rooms.forEach(room => {
-        types.add(room.type);
-      });
-    });
-    return Array.from(types);
-  }, [hotels]);
+  // Combinar todos los eventos
+  const allEvents = [...(events || []), ...(eventsEventbrite || []), ...(eventsTijuanaEventos || [])];
 
   // Obtener datos del hotel seleccionado
   const selectedHotelData = useMemo(() => {
-    const hotel = hotels.find(h => h.name === currentHotel);
-    if (!hotel) return null;
-
-    const room = hotel.rooms.find(r => r.type === currentRoomType);
-    if (!room) return null;
-
-    return {
-      hotel: hotel,
-      room: room,
-      prices: room.prices
-    };
-  }, [hotels, currentHotel, currentRoomType]);
+    return hotels.find(h => h.nombre === currentHotel);
+  }, [hotels, currentHotel]);
 
   // Calcular estadísticas de precios
   const priceStats = useMemo(() => {
-    if (!selectedHotelData) return null;
-
-    const prices = selectedHotelData.prices.map(p => p.price);
+    if (!hotels || hotels.length === 0) return null;
+    const prices = hotels.map(h => h.precio_promedio);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
     const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
     const priceRange = maxPrice - minPrice;
     const priceVariance = prices.reduce((acc, price) => acc + Math.pow(price - avgPrice, 2), 0) / prices.length;
     const priceStdDev = Math.sqrt(priceVariance);
-
-    // Encontrar días con precios más altos y más bajos
-    const minPriceDate = selectedHotelData.prices.find(p => p.price === minPrice)?.date;
-    const maxPriceDate = selectedHotelData.prices.find(p => p.price === maxPrice)?.date;
-
+    // Encontrar hoteles con precios más altos y más bajos
+    const minPriceHotel = hotels.find(h => h.precio_promedio === minPrice);
+    const maxPriceHotel = hotels.find(h => h.precio_promedio === maxPrice);
     return {
       minPrice,
       maxPrice,
       avgPrice,
       priceRange,
       priceStdDev,
-      minPriceDate,
-      maxPriceDate,
-      totalDays: prices.length
+      minPriceHotel: minPriceHotel?.nombre,
+      maxPriceHotel: maxPriceHotel?.nombre,
+      totalHotels: hotels.length
     };
-  }, [selectedHotelData]);
+  }, [hotels]);
 
-  // Comparación entre hoteles para el mismo tipo de habitación
+  // Comparación entre hoteles
   const hotelComparison = useMemo(() => {
-    const comparisonData = hotels.map(hotel => {
-      const room = hotel.rooms.find(r => r.type === currentRoomType);
-      if (!room) return null;
+    if (!hotels) return [];
+    return hotels.map(hotel => ({
+      name: hotel.nombre,
+      avgPrice: hotel.precio_promedio,
+      stars: hotel.estrellas,
+      nightsCounted: hotel.noches_contadas,
+      isSelected: hotel.nombre === currentHotel
+    })).sort((a, b) => a.avgPrice - b.avgPrice);
+  }, [hotels, currentHotel]);
 
-      const prices = room.prices.map(p => p.price);
-      const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-      const minPrice = Math.min(...prices);
-      const maxPrice = Math.max(...prices);
-
-      return {
-        name: hotel.name,
-        avgPrice,
-        minPrice,
-        maxPrice,
-        priceRange: maxPrice - minPrice,
-        isSelected: hotel.name === currentHotel
-      };
-    }).filter(Boolean);
-
-    return comparisonData.sort((a, b) => a!.avgPrice - b!.avgPrice);
-  }, [hotels, currentRoomType, currentHotel]);
-
-  // Análisis de precios por fecha
-  const dateAnalysis = useMemo(() => {
-    if (!selectedHotelData) return [];
-
-    return selectedHotelData.prices.map(price => {
-      const eventsOnDate = events.filter(event => 
-        event.fecha === price.date || event.fecha_inicio === price.date
-      );
-
-      return {
-        date: price.date,
-        day: new Date(price.date).getDate(),
-        price: price.price,
-        hasEvents: eventsOnDate.length > 0,
-        eventCount: eventsOnDate.length,
-        events: eventsOnDate
-      };
-    }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [selectedHotelData, events]);
-
-  // Análisis de impacto de eventos
-  const eventImpactAnalysis = useMemo(() => {
-    if (!selectedHotelData) return [];
-
-    const daysWithEvents = dateAnalysis.filter(d => d.hasEvents);
-    const daysWithoutEvents = dateAnalysis.filter(d => !d.hasEvents);
-
-    const avgPriceWithEvents = daysWithEvents.length > 0 
-      ? daysWithEvents.reduce((acc, d) => acc + d.price, 0) / daysWithEvents.length 
-      : 0;
-    
-    const avgPriceWithoutEvents = daysWithoutEvents.length > 0 
-      ? daysWithoutEvents.reduce((acc, d) => acc + d.price, 0) / daysWithoutEvents.length 
-      : 0;
-
-    const impactPercentage = avgPriceWithoutEvents > 0 
-      ? ((avgPriceWithEvents - avgPriceWithoutEvents) / avgPriceWithoutEvents) * 100 
-      : 0;
-
-    return {
-      daysWithEvents: daysWithEvents.length,
-      daysWithoutEvents: daysWithoutEvents.length,
-      avgPriceWithEvents,
-      avgPriceWithoutEvents,
-      impactPercentage,
-      events: daysWithEvents.map(d => ({
-        date: d.date,
-        price: d.price,
-        events: d.events
-      }))
+  // Análisis de eventos por hotel
+  const eventAnalysis = useMemo(() => {
+    if (!selectedHotelData || !allEvents) return null;
+    const hotelEvents = allEvents.filter(event => 
+      event.hotel_referencia === selectedHotelData.nombre ||
+      event.lugar.toLowerCase().includes(selectedHotelData.nombre.toLowerCase())
+    );
+    const eventsBySource = {
+      eventbrite: eventsEventbrite?.filter(e => 
+        e.hotel_referencia === selectedHotelData.nombre ||
+        e.lugar.toLowerCase().includes(selectedHotelData.nombre.toLowerCase())
+      ) || [],
+      tijuanaEventos: eventsTijuanaEventos?.filter(e => 
+        e.hotel_referencia === selectedHotelData.nombre ||
+        e.lugar.toLowerCase().includes(selectedHotelData.nombre.toLowerCase())
+      ) || []
     };
-  }, [dateAnalysis, selectedHotelData]);
+    return {
+      totalEvents: hotelEvents.length,
+      eventbriteEvents: eventsBySource.eventbrite.length,
+      tijuanaEventosEvents: eventsBySource.tijuanaEventos.length,
+      events: hotelEvents
+    };
+  }, [selectedHotelData, allEvents, eventsEventbrite, eventsTijuanaEventos]);
 
-  if (!selectedHotelData || !priceStats) {
+  // Loading state
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="text-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            Cargando datos de precios...
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            Obteniendo información actualizada de hoteles y eventos.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="text-center py-12">
+          <DollarSign className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            Error al cargar datos
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            {error}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // No data state
+  if (!hotels || hotels.length === 0) {
+    return (
+      <Card>
+        <CardContent className="text-center py-12">
+          <DollarSign className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            No hay datos disponibles
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            No se encontraron datos de hoteles para el análisis de precios.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!priceStats) {
     return (
       <Card>
         <CardContent className="text-center py-12">
@@ -189,7 +177,7 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
             No se encontraron datos
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            No hay datos disponibles para el hotel y tipo de habitación seleccionados.
+            No hay datos disponibles para el análisis de precios.
           </p>
         </CardContent>
       </Card>
@@ -207,7 +195,7 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Hotel
@@ -218,8 +206,8 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
                 </SelectTrigger>
                 <SelectContent>
                   {hotels.map((hotel) => (
-                    <SelectItem key={hotel.name} value={hotel.name}>
-                      {hotel.name}
+                    <SelectItem key={hotel.nombre} value={hotel.nombre}>
+                      {hotel.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -228,34 +216,16 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Tipo de Habitación
+                Modo de Análisis
               </label>
-              <Select value={currentRoomType} onValueChange={setCurrentRoomType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {roomTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Modo de Comparación
-              </label>
-              <Select value={comparisonMode} onValueChange={(value: "hotels" | "dates" | "events") => setComparisonMode(value)}>
+              <Select value={comparisonMode} onValueChange={(value: "hotels" | "events" | "analytics") => setComparisonMode(value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="hotels">Comparar Hoteles</SelectItem>
-                  <SelectItem value="dates">Análisis por Fechas</SelectItem>
-                  <SelectItem value="events">Impacto de Eventos</SelectItem>
+                  <SelectItem value="events">Análisis de Eventos</SelectItem>
+                  <SelectItem value="analytics">Estadísticas Generales</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -274,7 +244,7 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
                   {formatPrice(priceStats.minPrice)}
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-400">
-                  {priceStats.minPriceDate}
+                  {priceStats.minPriceHotel}
                 </p>
               </div>
               <TrendingDown className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -291,7 +261,7 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
                   {formatPrice(priceStats.maxPrice)}
                 </p>
                 <p className="text-xs text-red-600 dark:text-red-400">
-                  {priceStats.maxPriceDate}
+                  {priceStats.maxPriceHotel}
                 </p>
               </div>
               <TrendingUp className="h-8 w-8 text-red-600 dark:text-red-400" />
@@ -340,17 +310,17 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="w-5 h-5" />
-              Comparación entre Hoteles - {currentRoomType}
+              Comparación entre Hoteles
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {hotelComparison.map((hotel, index) => (
                 <div
-                  key={hotel!.name}
+                  key={hotel.name}
                   className={`
                     p-4 border rounded-lg transition-all duration-200
-                    ${hotel!.isSelected 
+                    ${hotel.isSelected 
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600' 
                       : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
                     }
@@ -363,19 +333,24 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
                       </Badge>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                          {hotel!.name}
+                          {hotel.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Rango: {formatPrice(hotel!.minPrice)} - {formatPrice(hotel!.maxPrice)}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="flex items-center gap-1">
+                            {Array.from({ length: hotel.stars }, (_, i) => (
+                              <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                          <span>• {hotel.nightsCounted} noches</span>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                        {formatPrice(hotel!.avgPrice)}
+                        {formatPrice(hotel.avgPrice)}
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Promedio
+                        Promedio por noche
                       </div>
                     </div>
                   </div>
@@ -386,146 +361,135 @@ export const PricingAnalysis: React.FC<PricingAnalysisProps> = ({
         </Card>
       )}
 
-      {comparisonMode === "dates" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Análisis de Precios por Fecha
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dateAnalysis}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Días con Eventos
-                </h4>
-                <div className="space-y-2">
-                  {dateAnalysis.filter(d => d.hasEvents).map(day => (
-                    <div key={day.date} className="flex items-center justify-between p-2 bg-orange-50 dark:bg-orange-900/20 rounded">
-                      <span className="text-sm">{day.date}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{formatPrice(day.price)}</span>
-                        <Badge variant="secondary">{day.eventCount} eventos</Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Estadísticas por Fecha
-                </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Días analizados:</span>
-                    <span className="font-semibold">{dateAnalysis.length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Días con eventos:</span>
-                    <span className="font-semibold">{dateAnalysis.filter(d => d.hasEvents).length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Días sin eventos:</span>
-                    <span className="font-semibold">{dateAnalysis.filter(d => !d.hasEvents).length}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {comparisonMode === "events" && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="w-5 h-5" />
-              Impacto de Eventos en Precios
+              <Calendar className="w-5 h-5" />
+              Análisis de Eventos - {selectedHotelData?.nombre}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {eventAnalysis ? (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-blue-50 dark:bg-blue-900/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-blue-800 dark:text-blue-200">
+                        {eventAnalysis.totalEvents}
+                      </div>
+                      <div className="text-sm text-blue-600 dark:text-blue-400">
+                        Total de Eventos
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-green-50 dark:bg-green-900/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-green-800 dark:text-green-200">
+                        {eventAnalysis.eventbriteEvents}
+                      </div>
+                      <div className="text-sm text-green-600 dark:text-green-400">
+                        Eventbrite
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-orange-50 dark:bg-orange-900/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-orange-800 dark:text-orange-200">
+                        {eventAnalysis.tijuanaEventosEvents}
+                      </div>
+                      <div className="text-sm text-orange-600 dark:text-orange-400">
+                        Tijuana Eventos
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {eventAnalysis.events.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                      Eventos Detallados
+                    </h4>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {eventAnalysis.events.map((event, idx) => (
+                        <div key={idx} className="p-3 border rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              {event.nombre}
+                            </span>
+                            <Badge variant="secondary">{event.fecha}</Badge>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            📍 {event.lugar}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">
+                  No se encontraron eventos para este hotel.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {comparisonMode === "analytics" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Estadísticas Generales
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                  Comparación de Precios
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Resumen de Hoteles
                 </h4>
-                <div className="space-y-3">
-                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-green-600 dark:text-green-400">Sin eventos</span>
-                      <span className="font-bold text-green-800 dark:text-green-200">
-                        {formatPrice(Array.isArray(eventImpactAnalysis) ? 0 : eventImpactAnalysis.avgPriceWithoutEvents)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                      {Array.isArray(eventImpactAnalysis) ? 0 : eventImpactAnalysis.daysWithoutEvents} días
-                    </p>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Total de hoteles:</span>
+                    <span className="font-semibold">{priceStats.totalHotels}</span>
                   </div>
-                  <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-orange-600 dark:text-orange-400">Con eventos</span>
-                      <span className="font-bold text-orange-800 dark:text-orange-200">
-                        {formatPrice(Array.isArray(eventImpactAnalysis) ? 0 : eventImpactAnalysis.avgPriceWithEvents)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
-                      {Array.isArray(eventImpactAnalysis) ? 0 : eventImpactAnalysis.daysWithEvents} días
-                    </p>
+                  <div className="flex justify-between">
+                    <span>Precio promedio:</span>
+                    <span className="font-semibold">{formatPrice(priceStats.avgPrice)}</span>
                   </div>
-                </div>
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
-                      {Array.isArray(eventImpactAnalysis) ? 0 : (eventImpactAnalysis.impactPercentage > 0 ? '+' : '')}{Array.isArray(eventImpactAnalysis) ? 0 : eventImpactAnalysis.impactPercentage.toFixed(1)}%
-                    </div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">
-                      Impacto promedio
-                    </div>
+                  <div className="flex justify-between">
+                    <span>Rango de precios:</span>
+                    <span className="font-semibold">{formatPrice(priceStats.priceRange)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Variabilidad:</span>
+                    <span className="font-semibold">{formatPrice(priceStats.priceStdDev)}</span>
                   </div>
                 </div>
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  Eventos Detallados
+                  Resumen de Eventos
                 </h4>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {(Array.isArray(eventImpactAnalysis) ? [] : eventImpactAnalysis.events).map((event: any) => (
-                    <div key={event.date} className="p-3 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
-                          {event.date}
-                        </span>
-                        <span className="font-bold text-gray-900 dark:text-gray-100">
-                          {formatPrice(event.price)}
-                        </span>
-                      </div>
-                      <div className="space-y-1">
-                        {event.events.map((evt: any, idx: number) => (
-                          <div key={idx} className="text-sm text-gray-600 dark:text-gray-400">
-                            • {evt.titulo}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Total de eventos:</span>
+                    <span className="font-semibold">{allEvents.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Eventos Eventbrite:</span>
+                    <span className="font-semibold">{eventsEventbrite?.length || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Eventos Tijuana Eventos:</span>
+                    <span className="font-semibold">{eventsTijuanaEventos?.length || 0}</span>
+                  </div>
                 </div>
               </div>
             </div>
