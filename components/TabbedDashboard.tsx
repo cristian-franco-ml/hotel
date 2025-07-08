@@ -9,9 +9,11 @@ import {
   Filter,
   Hotel,
   DollarSign,
-  CalendarDays
+  CalendarDays,
+  Target
 } from "lucide-react";
 import RealHotelDashboard from "./real-hotel-dashboard";
+import { CompetitiveAnalysis } from "./CompetitiveAnalysis";
 import { PriceCalendar } from "./PriceCalendar";
 import { HotelsManagement } from "./HotelsManagement";
 import { PricingAnalysis } from "./PricingAnalysis";
@@ -40,30 +42,22 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Resumen</span>
-            </TabsTrigger>
-            <TabsTrigger value="hotels" className="flex items-center gap-2">
-              <Building2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Hoteles</span>
+              <Target className="w-4 h-4" />
+              <span className="hidden sm:inline">Análisis de Mercado</span>
             </TabsTrigger>
             <TabsTrigger value="pricing" className="flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
-              <span className="hidden sm:inline">Precios</span>
+              <span className="hidden sm:inline">Gestión de Precios</span>
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4" />
-              <span className="hidden sm:inline">Calendario</span>
+            <TabsTrigger value="hotels" className="flex items-center gap-2">
+              <Building2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Base de Hoteles</span>
             </TabsTrigger>
             <TabsTrigger value="events" className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span className="hidden sm:inline">Eventos</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Análisis</span>
+              <span className="hidden sm:inline">Eventos & Calendario</span>
             </TabsTrigger>
           </TabsList>
 
@@ -71,85 +65,75 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = () => {
           <TabsContent value="overview" className="space-y-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Resumen del Dashboard
+                Análisis Competitivo
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Vista general de la correlación entre hoteles y eventos
+                Selecciona tu hotel principal y compara tu posición contra la competencia
               </p>
             </div>
             
-            {/* Aquí irá el contenido del dashboard actual */}
-            <RealHotelDashboard />
+            {/* Componente de análisis competitivo */}
+            <CompetitiveAnalysis />
           </TabsContent>
 
-          {/* Pestaña de Hoteles */}
-          <TabsContent value="hotels" className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Gestión de Hoteles
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Administra y visualiza información detallada de todos los hoteles
-              </p>
-            </div>
-            
-            <HotelsManagement />
-          </TabsContent>
-
-          {/* Pestaña de Precios */}
+          {/* Pestaña de Gestión de Precios */}
           <TabsContent value="pricing" className="space-y-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Análisis de Precios
+                Gestión de Precios
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Compara precios y ajustes automáticos por eventos
+                Optimiza tus precios basándote en eventos y tendencias del mercado
               </p>
             </div>
-            
             <PricingAnalysis />
           </TabsContent>
-
-          {/* Pestaña de Calendario */}
-          <TabsContent value="calendar" className="space-y-6">
+          
+          {/* Pestaña de Base de Hoteles */}
+          <TabsContent value="hotels" className="space-y-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Calendario de Precios
+                Base de Hoteles
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Visualiza los precios del hotel principal por día
+                Administra y visualiza información detallada de todos los hoteles en el mercado
               </p>
             </div>
-            
-            <PriceCalendar />
+            <HotelsManagement />
           </TabsContent>
-
-          {/* Pestaña de Eventos */}
+          
+          {/* Pestaña de Eventos & Calendario */}
           <TabsContent value="events" className="space-y-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Gestión de Eventos
+                Eventos & Calendario de Precios
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Administra eventos y su impacto en los precios hoteleros
+                Gestiona eventos que impactan precios y visualiza el calendario de tarifas
               </p>
             </div>
             
-            <EventsManagement />
-          </TabsContent>
-
-          {/* Pestaña de Análisis */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Análisis Avanzado
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Reportes detallados y tendencias del mercado hotelero
-              </p>
-            </div>
-            
-            <AdvancedAnalytics />
+            {/* Pestañas secundarias para Eventos y Calendario */}
+            <Tabs defaultValue="events-management" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="events-management" className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Gestión de Eventos
+                </TabsTrigger>
+                <TabsTrigger value="price-calendar" className="flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4" />
+                  Calendario de Precios
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="events-management">
+                <EventsManagement />
+              </TabsContent>
+              
+              <TabsContent value="price-calendar">
+                <PriceCalendar />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
       </main>

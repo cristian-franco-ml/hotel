@@ -6,35 +6,45 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  BarChart3, 
-  Building2, 
-  Calendar, 
-  TrendingUp, 
-  Filter,
-  Hotel,
+  Activity,
+  Settings,
   DollarSign,
-  CalendarDays,
+  Brain,
+  TrendingUp,
+  Hotel,
   RefreshCw,
   AlertCircle,
   CheckCircle,
   Loader2,
-  Zap
+  Zap,
+  Target,
+  Lightbulb,
+  Shield,
+  Clock,
+  BarChart3,
+  Bot,
+  Gauge
 } from "lucide-react";
 import { useLiveData } from "@/hooks/use-live-data";
-import RealHotelDashboard from "./real-hotel-dashboard";
-import { PriceCalendar } from "./PriceCalendar";
-import { HotelsManagement } from "./HotelsManagement";
-import { PricingAnalysis } from "./PricingAnalysis";
-import { EventsManagement } from "./EventsManagement";
-import { AdvancedAnalytics } from "./AdvancedAnalytics";
+
+// Importar los nuevos componentes especializados
+import AutomationDashboard from "./automation/AutomationDashboard";
+import StrategyRulesEngine from "./automation/StrategyRulesEngine";
+import AutomatedPricingActions from "./automation/AutomatedPricingActions";
+import MarketIntelligence from "./automation/MarketIntelligence";
+import PerformanceForecasts from "./automation/PerformanceForecasts";
+import CompetitiveComparison from "./automation/CompetitiveComparison";
+import { EnhancedFilters } from "./EnhancedFilters";
 import { ThemeSwitcher } from "./theme-switcher";
 
 interface EnhancedTabbedDashboardProps {
-  // Props para pasar datos a las diferentes pestañas
+ 
 }
 
 export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("automation-status");
+  const [currentFilters, setCurrentFilters] = useState<any>(null);
+  const [automationMode, setAutomationMode] = useState<"full-auto" | "supervised" | "manual">("supervised");
   
   const { 
     hotels, 
@@ -67,45 +77,78 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
   };
 
   const getStatusText = () => {
-    if (loading) return "Cargando datos...";
-    if (error) return "Error al cargar datos";
-    if (hasData) return "Datos actualizados";
-    return "Sin datos disponibles";
+    if (loading) return "Actualizando datos automáticos...";
+    if (error) return "Error en sistema automático";
+    if (hasData) return "Sistema RMS activo";
+    return "Sistema en espera";
+  };
+
+  const getAutomationModeColor = () => {
+    switch (automationMode) {
+      case "full-auto": return "text-green-600 bg-green-50 border-green-200";
+      case "supervised": return "text-blue-600 bg-blue-50 border-blue-200";
+      case "manual": return "text-gray-600 bg-gray-50 border-gray-200";
+    }
+  };
+
+  const getAutomationModeLabel = () => {
+    switch (automationMode) {
+      case "full-auto": return "Automático Completo";
+      case "supervised": return "Supervisado";
+      case "manual": return "Manual";
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 font-inter antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
-      {/* Header */}
-      <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm py-4 px-6 flex items-center justify-between sticky top-0 z-10 rounded-b-xl border-b border-blue-100 dark:border-gray-700 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-800 dark:to-blue-900 font-inter antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
+      {/* Header Rediseñado para RMS */}
+      <nav className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-4 px-6 flex items-center justify-between sticky top-0 z-20 border-b border-blue-100 dark:border-gray-700 transition-colors duration-300">
         <div className="flex items-center">
-          <Hotel className="h-7 w-7 text-blue-600 dark:text-blue-400 mr-2" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Hotel Dashboard con Correlación + tijuanaeventos.com
-          </h1>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg">
+              <Bot className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                Rate Insight Intelligence
+              </h1>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Revenue Management System Automatizado
+              </p>
+            </div>
+          </div>
         </div>
+        
         <div className="flex items-center space-x-4">
-          {/* Status Indicator */}
-          <div className="flex items-center space-x-2 text-sm">
-            {getStatusIcon()}
-            <span className="text-gray-600 dark:text-gray-400">{getStatusText()}</span>
+          {/* Estado del Sistema de Automatización */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 text-sm">
+              {getStatusIcon()}
+              <span className="text-gray-600 dark:text-gray-400">{getStatusText()}</span>
+            </div>
+            
+            {/* Modo de Automatización */}
+            <Badge variant="outline" className={getAutomationModeColor()}>
+              <Gauge className="w-3 h-3 mr-1" />
+              {getAutomationModeLabel()}
+            </Badge>
           </div>
           
-          {/* Data Source Badges */}
+          {/* Indicadores de Datos */}
           {hasData && (
             <div className="flex items-center space-x-2">
-              <Badge variant="outline" className="text-xs">
-                Booking.com ({hotels.length})
+              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                <Hotel className="w-3 h-3 mr-1" />
+                {hotels.length} Hoteles
               </Badge>
-              <Badge variant="outline" className="text-xs">
-                Eventbrite ({events.length})
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                TijuanaEventos ({eventsTijuanaEventos.length})
+              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                <Target className="w-3 h-3 mr-1" />
+                {eventsTijuanaEventos.length} Eventos
               </Badge>
             </div>
           )}
           
-          {/* Refresh Button */}
+          {/* Control de Actualización */}
           <Button
             variant="outline"
             size="sm"
@@ -114,7 +157,7 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
             className="flex items-center space-x-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>Actualizar</span>
+            <span>Sincronizar</span>
           </Button>
           
           <ThemeSwitcher />
@@ -122,166 +165,164 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Barra de pestañas justo debajo del nav */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Resumen</span>
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {/* Nueva Navegación de 5 Pestañas RMS */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" defaultValue="automation-status">
+          <TabsList className="grid w-full grid-cols-6 mb-6 h-14 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-1">
+            <TabsTrigger 
+              value="automation-status" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <Activity className="w-5 h-5" />
+              <span className="text-xs font-medium">Dashboard de Estado</span>
             </TabsTrigger>
-            <TabsTrigger value="hotels" className="flex items-center gap-2">
-              <Building2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Hoteles</span>
+            <TabsTrigger 
+              value="strategy-rules" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="text-xs font-medium">Estrategia & Reglas</span>
             </TabsTrigger>
-            <TabsTrigger value="pricing" className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4" />
-              <span className="hidden sm:inline">Precios</span>
+            <TabsTrigger 
+              value="automated-pricing" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <DollarSign className="w-5 h-5" />
+              <span className="text-xs font-medium">Pricing Automático</span>
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4" />
-              <span className="hidden sm:inline">Calendario</span>
+            <TabsTrigger 
+              value="market-intelligence" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <Brain className="w-5 h-5" />
+              <span className="text-xs font-medium">Market Intelligence</span>
             </TabsTrigger>
-            <TabsTrigger value="events" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span className="hidden sm:inline">Eventos</span>
+            <TabsTrigger 
+              value="performance-forecasts" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <TrendingUp className="w-5 h-5" />
+              <span className="text-xs font-medium">Performance & Forecasts</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Análisis</span>
+            <TabsTrigger 
+              value="competitive-comparison" 
+              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
+            >
+              <Target className="w-5 h-5" />
+              <span className="text-xs font-medium">Comparación Simple</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            {/* Error, Loading, No Data solo para overview */}
-            {error && (
-              <Card className="mb-8 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
-                    <AlertCircle className="h-5 w-5" />
-                    <span className="font-medium">Error al cargar datos:</span>
-                    <span>{error}</span>
-                  </div>
-                  <div className="mt-4 flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={refreshHotels}>
-                      Reintentar Hoteles
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => refreshEvents()}>
-                      Reintentar Eventos
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => refreshTijuanaEventos()}>
-                      Reintentar TijuanaEventos
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {loading && !hasData && (
-              <Card className="mb-8">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-                    <span>Cargando datos del dashboard...</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {!loading && !hasData && !error && (
-              <Card className="mb-8">
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No hay datos disponibles</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Haz clic en "Actualizar" para cargar datos desde las fuentes externas
-                    </p>
-                    <div className="flex justify-center space-x-2">
-                      <Button onClick={refreshHotels}>
-                        Cargar Hoteles
-                      </Button>
-                      <Button onClick={() => refreshEvents()}>
-                        Cargar Eventos
-                      </Button>
-                      <Button onClick={() => refreshTijuanaEventos()}>
-                        Cargar TijuanaEventos
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {/* Recomendaciones Inteligentes */}
-            {hasData && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-300 text-2xl">
-                    <Zap className="w-6 h-6 text-purple-500" />
-                    Recomendaciones Inteligentes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {['Habitación Estándar', 'Habitación Doble', 'Habitación Queen', 'Suite'].map((roomType) => {
-                      // Filtrar hoteles por tipo de habitación (simulación: todos tienen todos los tipos)
-                      const hotelesFiltrados = hotels.map(hotel => ({
-                        nombre: hotel.nombre,
-                        precio: hotel.precio_promedio,
-                      }));
-                      // Ordenar por precio ascendente
-                      const top3 = [...hotelesFiltrados].sort((a, b) => a.precio - b.precio).slice(0, 3);
-                      const mejor = top3[0];
-                      return (
-                        <Card key={roomType} className="bg-purple-50/50 border-purple-200">
-                          <CardHeader>
-                            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                              {roomType}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="mb-3 p-3 rounded bg-green-50 border border-green-200">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span role="img" aria-label="trofeo">🏆</span>
-                                <span className="font-semibold text-green-800">Mejor opción</span>
-                              </div>
-                              <div className="font-bold text-xl text-green-900">{mejor?.nombre}</div>
-                              <div className="text-green-700 text-lg">{formatPrice(mejor?.precio || 0)}</div>
-                            </div>
-                            <div className="mt-2">
-                              <div className="font-semibold text-sm mb-1">Top 3 opciones:</div>
-                              <ol className="list-decimal list-inside space-y-1">
-                                {top3.map((h, idx) => (
-                                  <li key={h.nombre} className="flex justify-between text-sm">
-                                    <span>{h.nombre}</span>
-                                    <span className="font-medium">{formatPrice(h.precio)}</span>
-                                  </li>
-                                ))}
-                              </ol>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {/* Aquí irá el contenido del dashboard actual */}
-            <RealHotelDashboard />
+          {/* Filtros Globales Mejorados */}
+          <div className="mb-6">
+            <EnhancedFilters
+              onFiltersChange={setCurrentFilters}
+              onRefresh={refreshAll}
+              isLoading={loading}
+              lastUpdated={metadata?.scraped_at}
+            />
+          </div>
+
+          {/* 1. Dashboard de Estado - Centro de Comando */}
+          <TabsContent value="automation-status" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
+                  <Activity className="w-6 h-6 text-white" />
+                </div>
+                Dashboard de Estado del Sistema
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Centro de comando para monitorear y supervisar todas las operaciones automatizadas
+              </p>
+            </div>
+            
+            <AutomationDashboard />
           </TabsContent>
-          <TabsContent value="hotels" className="space-y-6">
-            <HotelsManagement />
+
+          {/* 2. Estrategia y Reglas - Motor de Decisiones */}
+          <TabsContent value="strategy-rules" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-purple-500 to-violet-500 rounded-lg">
+                  <Settings className="w-6 h-6 text-white" />
+                </div>
+                Motor de Estrategias y Reglas
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Configuración y gestión de los parámetros que guían las decisiones automatizadas
+              </p>
+            </div>
+            
+            <StrategyRulesEngine />
           </TabsContent>
-          <TabsContent value="pricing" className="space-y-6">
-            <PricingAnalysis />
+
+          {/* 3. Pricing Automático - Gestión de Precios */}
+          <TabsContent value="automated-pricing" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-white" />
+                </div>
+                Sistema de Pricing Automático
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Visualización y gestión de todos los ajustes de precios automatizados
+              </p>
+            </div>
+            
+            <AutomatedPricingActions />
           </TabsContent>
-          <TabsContent value="calendar" className="space-y-6">
-            <PriceCalendar />
+
+          {/* 4. Market Intelligence - Análisis de Demanda */}
+          <TabsContent value="market-intelligence" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                Inteligencia de Mercado Automatizada
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Análisis automatizado de demanda, eventos y factores externos que impactan el mercado
+              </p>
+            </div>
+            
+            <MarketIntelligence />
           </TabsContent>
-          <TabsContent value="events" className="space-y-6">
-            <EventsManagement />
+
+          {/* 5. Performance y Forecasts - Seguimiento de Efectividad */}
+          <TabsContent value="performance-forecasts" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                Performance y Forecasting Automático
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Seguimiento de efectividad de decisiones automáticas vs predicciones y ROI de automatización
+              </p>
+            </div>
+            
+            <PerformanceForecasts />
           </TabsContent>
-          <TabsContent value="analytics" className="space-y-6">
-            <AdvancedAnalytics />
+
+          {/* 6. Comparación Competitiva Simple - Para Todos */}
+          <TabsContent value="competitive-comparison" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                🏆 Comparación Simple con la Competencia
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                ¡Fácil de entender! Cómo nos comparamos con otros hoteles y por qué ajustamos nuestros precios
+              </p>
+            </div>
+            
+            <CompetitiveComparison />
           </TabsContent>
         </Tabs>
       </main>
