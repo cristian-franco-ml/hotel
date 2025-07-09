@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import hotelData from "../data/hotels-complete.json"
+import { useLiveData } from "@/hooks/use-live-data"
 
 // Mock events data for demonstration
 const mockEvents = {
@@ -82,29 +82,19 @@ export default function HotelDashboard() {
   const [selectedSource, setSelectedSource] = useState<string>("all")
   const [selectedDate, setSelectedDate] = useState<string>("2025-07-01")
 
-  const hotels = hotelData.data.hotels
-  const uniqueHotels = hotels.map((h) => h.name)
-  const uniqueSources = [
-    ...new Set(
-      hotels
-        .map((h) => h.source)
-        .filter((source) => typeof source === "string" && source.length > 0)
-    ),
-  ]
+  const { hotels } = useLiveData();
+  const uniqueHotels = hotels.map((h) => h.nombre)
+  const uniqueSources: string[] = [];
 
   const filteredData = useMemo(() => {
     return hotels
-      .filter((hotel) => selectedHotel === "all" || hotel.name === selectedHotel)
-      .filter((hotel) => selectedSource === "all" || hotel.source === selectedSource)
+      .filter((hotel) => selectedHotel === "all" || hotel.nombre === selectedHotel)
       .map((hotel) => {
-        const mainRoom = hotel.rooms[0]
-        const priceObj = mainRoom.prices.find((p) => p.date === selectedDate)
-        if (!priceObj) return null
         return {
           ...hotel,
-          mainRoomType: mainRoom.type,
-          price: priceObj.price,
-          date: priceObj.date,
+          mainRoomType: "Estándar",
+          price: hotel.precio_promedio,
+          date: selectedDate,
         }
       })
       .filter(Boolean)
@@ -154,23 +144,6 @@ export default function HotelDashboard() {
                     {uniqueHotels.map((hotel) => (
                       <SelectItem key={hotel} value={hotel}>
                         {formatHotelName(hotel)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Source</label>
-                <Select value={selectedSource} onValueChange={setSelectedSource}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select source" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Sources</SelectItem>
-                    {uniqueSources.map((source) => (
-                      <SelectItem key={source} value={source}>
-                        {source}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -247,13 +220,12 @@ export default function HotelDashboard() {
                 {/* Grid de cards */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                   {hotelsInGroup.map((hotel) => hotel && (
-                    <Card key={`${hotel.name}-${hotel.date}`} className="rounded-2xl shadow-md bg-white p-6 hover:shadow-lg transition-shadow">
+                    <Card key={`${hotel.nombre}-${hotel.date}`} className="rounded-2xl shadow-md bg-white p-6 hover:shadow-lg transition-shadow">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          {formatHotelName(hotel.name)}
+                          {formatHotelName(hotel.nombre)}
                         </CardTitle>
                         <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="secondary" className="text-xs">{hotel.source}</Badge>
                           <span className="text-sm text-gray-500">{hotel.mainRoomType}</span>
                           <span className="text-sm text-gray-500">{hotel.date}</span>
                         </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface InsightItem {
   id: string;
@@ -67,6 +68,15 @@ export const ExecutiveSummary: React.FC<ExecutiveSummaryProps> = ({
   keyFindings,
   recommendations
 }) => {
+  // Ejemplo de lista de hoteles (debería venir de props o contexto en producción)
+  const hotelList = [
+    "Grand Hotel Tijuana",
+    "Hotel Lucerna",
+    "Hotel Real Inn",
+    "Hotel Pueblo Amigo"
+  ];
+  const [selectedHotel, setSelectedHotel] = useState(hotelList[0] || "");
+
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat("es-MX", { 
       style: "currency", 
@@ -87,53 +97,22 @@ export const ExecutiveSummary: React.FC<ExecutiveSummaryProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Key Findings Header */}
-      <Card className="border-l-4 border-l-blue-500">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
-            <span>Resumen Ejecutivo</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {keyFindings.averagePriceChange > 0 ? '+' : ''}{keyFindings.averagePriceChange.toFixed(1)}%
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Cambio promedio en precios</div>
-              <div className="flex items-center justify-center mt-1">
-                {keyFindings.averagePriceChange > 0 ? (
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                ) : (
-                  <TrendingDown className="w-4 h-4 text-red-600" />
-                )}
-              </div>
-            </div>
-            
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {keyFindings.occupancyRate}%
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Tasa de ocupación</div>
-              <Badge 
-                variant={keyFindings.occupancyRate > 85 ? "default" : "secondary"}
-                className="mt-1"
-              >
-                {keyFindings.occupancyRate > 85 ? 'Excelente' : 'Buena'}
-              </Badge>
-            </div>
-            
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {formatCurrency(keyFindings.totalRevenue)}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Ingresos estimados</div>
-              <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">del día</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Dropdown para seleccionar hotel principal */}
+      <div className="mb-4 flex items-center gap-2">
+        <span className="font-medium">Hotel principal:</span>
+        <Select value={selectedHotel} onValueChange={setSelectedHotel}>
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder="Selecciona un hotel" />
+          </SelectTrigger>
+          <SelectContent>
+            {hotelList.map(hotel => (
+              <SelectItem key={hotel} value={hotel}>
+                {hotel}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* Insights Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

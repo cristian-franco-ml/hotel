@@ -1,0 +1,46 @@
+[
+  {
+    "nombre": "Evento 1",
+    "fecha": "Fecha por confirmar",
+    "lugar": "Tijuana",
+    "enlace": "https://tijuanaeventos.com",
+    "descripcion": "",
+    "fuente": "tijuanaeventos.com",
+    "latitude": 32.5149,
+    "longitude": -117.0382,
+    "distance_km": 0.0
+  },
+  {
+    "nombre": "Evento 9",
+    "fecha": "Fecha por confirmar",
+    "lugar": "Tijuana",
+    "enlace": "https://tijuanaeventos.com",
+    "descripcion": "",
+    "fuente": "tijuanaeventos.com",
+    "latitude": 32.5149,
+    "longitude": -117.0382,
+    "distance_km": 0.0
+  },
+  {
+    "nombre": "Evento 16",
+    "fecha": "Fecha por confirmar",
+    "lugar": "Tijuana",
+    "enlace": "https://tijuanaeventos.com",
+    "descripcion": "",
+    "fuente": "tijuanaeventos.com",
+    "latitude": 32.5149,
+    "longitude": -117.0382,
+    "distance_km": 0.0
+  },
+  {
+    "nombre": "DESTACADO",
+    "fecha": "Fecha por confirmar",
+    "lugar": "Tijuana",
+    "enlace": "https://tijuanaeventos.com/eventos/brincos-dieras-en-tijuana-2025/",
+    "descripcion": "",
+    "fuente": "tijuanaeventos.com",
+    "latitude": 32.5149,
+    "longitude": -117.0382,
+    "distance_km": 0.0
+  }
+]

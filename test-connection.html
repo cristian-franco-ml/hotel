@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Conexión con Backend</h1>
+    
+    <div id="results"></div>
+    
+    <div>
+        <button onclick="testHealth()">Test Health</button>
+        <button onclick="testExistingData()">Test Existing Data</button>
+        <button onclick="testHotelsLive()">Test Hotels Live</button>
+        <button onclick="testEventsLive()">Test Events Live</button>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001';
+        
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            results.appendChild(div);
+        }
+        
+        async function testHealth() {
+            try {
+                addResult('🔄 Probando endpoint de health...', 'info');
+                const response = await fetch(`${API_BASE_URL}/api/health`);
+                const data = await response.json();
+                addResult(`✅ Health OK: ${JSON.stringify(data)}`, 'success');
+            } catch (error) {
+                addResult(`❌ Error en health: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testExistingData() {
+            try {
+                addResult('🔄 Probando datos existentes...', 'info');
+                const response = await fetch(`${API_BASE_URL}/api/data/existing`);
+                const data = await response.json();
+                addResult(`✅ Datos existentes: ${data.hotels?.length || 0} hoteles, ${data.events?.length || 0} eventos`, 'success');
+                console.log('Datos completos:', data);
+            } catch (error) {
+                addResult(`❌ Error en datos existentes: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testHotelsLive() {
+            try {
+                addResult('🔄 Probando scraping de hoteles...', 'info');
+                const response = await fetch(`${API_BASE_URL}/api/hotels/live`);
+                const data = await response.json();
+                addResult(`✅ Hoteles live: ${data.hotels?.length || 0} hoteles`, 'success');
+            } catch (error) {
+                addResult(`❌ Error en hoteles live: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEventsLive() {
+            try {
+                addResult('🔄 Probando scraping de eventos...', 'info');
+                const response = await fetch(`${API_BASE_URL}/api/events/live`);
+                const data = await response.json();
+                addResult(`✅ Eventos live: ${data.events?.length || 0} eventos`, 'success');
+            } catch (error) {
+                addResult(`❌ Error en eventos live: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-test al cargar
+        window.onload = function() {
+            addResult('🚀 Iniciando tests automáticos...', 'info');
+            setTimeout(testHealth, 1000);
+            setTimeout(testExistingData, 2000);
+        };
+    </script>
+</body>
+</html> 
