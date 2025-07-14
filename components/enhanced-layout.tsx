@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Sidebar } from '@/components/ui/sidebar';
 import { SmartBreadcrumb } from '@/components/ui/breadcrumb';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,8 @@ import {
   Minimize2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { NavigationBar } from "@/components/ui/NavigationBar";
+import { Sidebar } from '@/components/ui/sidebar';
 
 interface EnhancedLayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,8 @@ interface EnhancedLayoutProps {
     message: string;
     timestamp: string;
   }>;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
@@ -46,9 +49,10 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
   title,
   subtitle,
   headerActions,
-  alerts = []
+  alerts = [],
+  activeTab,
+  onTabChange
 }) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -57,7 +61,7 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setSidebarCollapsed(true);
+        // setSidebarCollapsed(true); // Removed as sidebar is removed
       }
     };
 
@@ -84,7 +88,19 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
   const unreadAlertsCount = alerts.filter(alert => alert.type === 'warning' || alert.type === 'error').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 transition-colors duration-300 flex flex-col">
+      {/* Navigation Bar - Barra de navegación principal (hasta arriba) */}
+      <NavigationBar 
+        active={activeTab || currentSection} 
+        onChange={(key) => {
+          if (onTabChange) {
+            onTabChange(key);
+          } else {
+            handleSectionChange(key);
+          }
+        }}
+      />
+
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
         <div 
@@ -93,47 +109,18 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
         />
       )}
 
-      {/* Sidebar */}
-      {showSidebar && (
-        <div className={cn(
-          'fixed left-0 top-0 h-full z-50 lg:z-20 transition-transform duration-300',
-          showMobileMenu ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        )}>
-          <Sidebar
-            isCollapsed={sidebarCollapsed}
-            onToggle={setSidebarCollapsed}
-            currentSection={currentSection}
-            onSectionChange={handleSectionChange}
-          />
-        </div>
-      )}
+      {/* Main Layout with Sidebar and Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <Sidebar currentSection={currentSection} onSectionChange={handleSectionChange} />
 
-      {/* Main Content */}
-      <div className={cn(
-        'transition-all duration-300',
-        showSidebar ? (sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64') : 'ml-0'
-      )}>
-        {/* Header */}
-        <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-gray-800">
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between px-4 py-3">
             {/* Left Section */}
             <div className="flex items-center space-x-4">
-              {/* Mobile Menu Toggle */}
-              {showSidebar && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className="lg:hidden"
-                >
-                  {showMobileMenu ? (
-                    <X className="h-5 w-5" />
-                  ) : (
-                    <Menu className="h-5 w-5" />
-                  )}
-                </Button>
-              )}
-
               {/* Title */}
               <div className="flex flex-col">
                 <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -260,5 +247,6 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
         </main>
       </div>
     </div>
+  </div>
   );
 }; 
