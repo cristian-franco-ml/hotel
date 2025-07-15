@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
 import { 
@@ -35,11 +35,23 @@ import {
   Settings,
   Shield
 } from 'lucide-react'
+import { fetchPreciosLiveData } from "@/lib/mock-backend";
 
 const AutomatedPricingActions = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('24h')
   const [expandedRooms, setExpandedRooms] = useState<string[]>(['suite'])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [roomAdjustments, setRoomAdjustments] = useState<any[]>([])
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    fetchPreciosLiveData()
+      .then(data => {
+        setRoomAdjustments(data);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
 
   const toggleRoomExpansion = (roomId: string) => {
     setExpandedRooms(prev => 
@@ -82,58 +94,6 @@ const AutomatedPricingActions = () => {
       trend: 'stable' as const,
       description: 'Tiempo restante hasta la próxima evaluación automática de precios',
       icon: Clock
-    }
-  ]
-
-  // Datos de ajustes en tiempo real
-  const roomAdjustments = [
-    {
-      id: 'suite',
-      roomType: 'Suite Hotel Lucerna',
-      originalPrice: 5100,
-      adjustedPrice: 5865,
-      changePercent: +15,
-      confidence: 94,
-      trigger: 'Evento CECUT detectado',
-      triggerTime: 'Hace 23 min',
-      nextReview: 'En 37 min',
-      adjustmentReason: 'Concierto alto impacto - 5,000+ asistentes esperados - Histórico similar +18% demanda',
-      impactProjected: '+$765 por noche',
-      bookingsToday: 8,
-      bookingsYesterday: 3,
-      status: 'activo'
-    },
-    {
-      id: 'queen',
-      roomType: 'Queen Estándar',
-      originalPrice: 3280,
-      adjustedPrice: 3608,
-      changePercent: +10,
-      confidence: 87,
-      trigger: 'Optimización demanda',
-      triggerTime: 'Hace 45 min',
-      nextReview: 'En 15 min',
-      adjustmentReason: 'Ocupación actual 89% - Por encima del objetivo 85% - Aprovechar alta demanda',
-      impactProjected: '+$328 por noche',
-      bookingsToday: 12,
-      bookingsYesterday: 8,
-      status: 'activo'
-    },
-    {
-      id: 'double',
-      roomType: 'Doble Estándar',
-      originalPrice: 2920,
-      adjustedPrice: 2628,
-      changePercent: -10,
-      confidence: 82,
-      trigger: 'Respuesta competitiva',
-      triggerTime: 'Hace 1h 20min',
-      nextReview: 'En 40 min',
-      adjustmentReason: 'Hotel Real Inn redujo precios 15% - Mantener competitividad - Estrategia defensiva',
-      impactProjected: 'Protege 18 reservas',
-      bookingsToday: 15,
-      bookingsYesterday: 22,
-      status: 'monitoreando'
     }
   ]
 
@@ -259,326 +219,178 @@ const AutomatedPricingActions = () => {
             </Card>
           ))}
         </div>
-
-        {/* Pestañas Principales */}
-        <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="current" className="flex items-center space-x-2">
-              <Activity className="h-4 w-4" />
-              <span>Precios Actuales</span>
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center space-x-2">
-              <Clock className="h-4 w-4" />
-              <span>Historial de Ajustes</span>
-            </TabsTrigger>
-            <TabsTrigger value="competitors" className="flex items-center space-x-2">
-              <Target className="h-4 w-4" />
-                              <span>Monitoreo de Competencia</span>
-            </TabsTrigger>
-            <TabsTrigger value="forecast" className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4" />
-                              <span>Pronóstico de Precios</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Tab 1: Precios Actuales */}
-          <TabsContent value="current" className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5" />
-                  <span>Ajustes de Precios en Tiempo Real</span>
-                </CardTitle>
-                <CardDescription>
-                  Estado actual de todos los tipos de habitación y sus ajustes automáticos
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {roomAdjustments.map((room) => (
-                    <div key={room.id} className="border rounded-lg overflow-hidden">
-                      {/* Header de la habitación */}
-                      <div className="p-4 bg-gray-50 border-b">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleRoomExpansion(room.id)}
-                              className="p-1"
-                            >
-                              {expandedRooms.includes(room.id) ? (
-                                <ChevronUp className="h-4 w-4" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4" />
-                              )}
-                            </Button>
-                            <div>
-                              <h3 className="font-semibold">{room.roomType}</h3>
-                              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                <span>Trigger: {room.trigger}</span>
-                                <span>•</span>
-                                <span>{room.triggerTime}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <Badge 
-                              variant="outline" 
-                              className={room.status === 'activo' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}
-                            >
-                              {room.status === 'activo' ? (
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                              ) : (
-                                <Eye className="h-3 w-3 mr-1" />
-                              )}
-                              {room.status.charAt(0).toUpperCase() + room.status.slice(1)}
-                            </Badge>
-                            <Badge variant="outline" className="bg-blue-100 text-blue-700">
-                              {room.confidence}% confianza
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Comparación de precios */}
-                      <div className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                          <div className="text-center p-3 bg-gray-50 rounded-lg">
-                            <div className="text-sm text-gray-600 mb-1">Precio Original</div>
-                            <div className="text-xl font-bold text-gray-700">
-                              {formatCurrency(room.originalPrice)}
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center justify-center">
-                            <div className="flex items-center space-x-2">
-                              <ArrowUpDown className="h-5 w-5 text-blue-600" />
-                              <div className={`text-lg font-bold ${getChangeColor(room.changePercent)}`}>
-                                {room.changePercent > 0 ? '+' : ''}{room.changePercent}%
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className={`text-center p-3 rounded-lg ${
-                            room.changePercent > 0 ? 'bg-green-50' : 'bg-red-50'
-                          }`}>
-                            <div className="text-sm text-gray-600 mb-1">Precio Ajustado</div>
-                            <div className={`text-xl font-bold ${
-                              room.changePercent > 0 ? 'text-green-700' : 'text-red-700'
-                            }`}>
-                              {formatCurrency(room.adjustedPrice)}
+        {/* Ajustes de Precios en Tiempo Real */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-2">
+              <DollarSign className="h-5 w-5" />
+              <span>Ajustes de Precios en Tiempo Real</span>
+            </CardTitle>
+            <CardDescription>
+              Estado actual de todos los tipos de habitación y sus ajustes automáticos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="text-gray-500 mb-4">
+                  <RefreshCw className="h-12 w-12 mx-auto mb-2" />
+                  <p>Cargando datos de precios...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {roomAdjustments.map((room) => (
+                  <div
+                    key={room.id}
+                    className={
+                      `border rounded-lg overflow-hidden transition-all duration-200 bg-white/90 shadow-md hover:shadow-xl hover:border-blue-400 group`
+                    }
+                    style={{ borderRadius: '8px' }}
+                  >
+                    {/* Header de la habitación */}
+                    <div className="p-4 bg-gray-50 border-b" style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleRoomExpansion(room.id)}
+                            className="p-1"
+                          >
+                            {expandedRooms.includes(room.id) ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <div>
+                            <h3 className="font-semibold text-lg group-hover:text-blue-700 transition-colors duration-200">{room.roomType}</h3>
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <span>Trigger: {room.trigger}</span>
+                              <span>•</span>
+                              <span>{room.triggerTime}</span>
                             </div>
                           </div>
                         </div>
-
-                        {/* Timeline y próxima revisión */}
-                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg mb-4">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm font-medium">Próxima revisión: {room.nextReview}</span>
-                          </div>
-                          <Progress value={65} className="w-32 h-2" />
+                        <div className="flex items-center space-x-3">
+                          <Badge 
+                            variant="outline" 
+                            className={room.status === 'activo' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}
+                          >
+                            {room.status === 'activo' ? (
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                            ) : (
+                              <Eye className="h-3 w-3 mr-1" />
+                            )}
+                            {typeof room.status === 'string' && room.status.length > 0
+                              ? room.status.charAt(0).toUpperCase() + room.status.slice(1)
+                              : 'Desconocido'}
+                          </Badge>
+                          <Badge variant="outline" className="bg-blue-100 text-blue-700">
+                            {room.confidence}% confianza
+                          </Badge>
                         </div>
-
-                        {/* Información expandida */}
-                        {expandedRooms.includes(room.id) && (
-                          <div className="space-y-4 pt-4 border-t">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <h4 className="font-medium mb-2">Razón del Ajuste</h4>
-                                <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                                  {room.adjustmentReason}
-                                </p>
-                              </div>
-                              <div>
-                                <h4 className="font-medium mb-2">Impacto Proyectado</h4>
-                                <div className="bg-green-50 p-3 rounded">
-                                  <div className="text-lg font-bold text-green-700">
-                                    {room.impactProjected}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div className="text-center p-3 border rounded">
-                                <div className="text-sm text-gray-600">Reservas Hoy</div>
-                                <div className="text-xl font-bold text-blue-600">{room.bookingsToday}</div>
-                              </div>
-                              <div className="text-center p-3 border rounded">
-                                <div className="text-sm text-gray-600">Reservas Ayer</div>
-                                <div className="text-xl font-bold text-gray-600">{room.bookingsYesterday}</div>
-                              </div>
-                              <div className="text-center p-3 border rounded">
-                                <div className="text-sm text-gray-600">Variación</div>
-                                <div className={`text-xl font-bold ${
-                                  room.bookingsToday > room.bookingsYesterday ? 'text-green-600' : 'text-red-600'
-                                }`}>
-                                  {room.bookingsToday > room.bookingsYesterday ? '+' : ''}
-                                  {room.bookingsToday - room.bookingsYesterday}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2">
-                              <Button size="sm" variant="outline">
-                                <Eye className="h-3 w-3 mr-1" />
-                                Ver Detalles
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Settings className="h-3 w-3 mr-1" />
-                                Ajustar Regla
-                              </Button>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button size="sm" variant="outline" className="text-red-600">
-                                    <Pause className="h-3 w-3 mr-1" />
-                                    Pausar Auto
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Pausar ajustes automáticos para este tipo de habitación</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab 2: Historial de Ajustes */}
-          <TabsContent value="history" className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5" />
-                  <span>Historial de Ajustes Automáticos</span>
-                </CardTitle>
-                <CardDescription>
-                  Registro completo de todas las acciones de pricing automatizadas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {adjustmentHistory.map((adjustment) => (
-                    <div key={adjustment.id} className="flex items-start space-x-4 p-4 border rounded-lg">
-                      <div className="flex-shrink-0 mt-1">
-                        {adjustment.action.includes('Aumentó') ? (
-                          <ArrowUp className="h-5 w-5 text-green-600" />
-                        ) : (
-                          <ArrowDown className="h-5 w-5 text-red-600" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium">
-                            {adjustment.action} {adjustment.roomType}
-                          </p>
+                    {/* Comparación de precios */}
+                    <div className="p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="text-center p-3 bg-gray-50 rounded-lg" style={{borderRadius:'8px'}}>
+                          <div className="text-sm text-gray-600 mb-1">Precio Original</div>
+                          <div className="text-xl font-bold text-gray-700">{formatCurrency(room.originalPrice)}</div>
+                        </div>
+                        <div className="flex items-center justify-center">
                           <div className="flex items-center space-x-2">
-                            <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
-                              {adjustment.confidence}% confianza
-                            </Badge>
-                            <span className="text-xs text-gray-500">
-                              {formatTime(adjustment.timestamp)}
-                            </span>
+                            {room.changePercent > 0 ? (
+                              <ArrowUp className="h-5 w-5 text-green-600" />
+                            ) : (
+                              <ArrowDown className="h-5 w-5 text-red-600" />
+                            )}
+                            <div className={`text-2xl font-extrabold ${getChangeColor(room.changePercent)}`}>{room.changePercent > 0 ? '+' : ''}{room.changePercent}%</div>
                           </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-4 mb-2 text-sm">
-                          <span className="font-medium">
-                            {formatCurrency(adjustment.fromPrice)} → {formatCurrency(adjustment.toPrice)}
-                          </span>
-                          <span className="text-gray-500">•</span>
-                          <span className="text-gray-600">{adjustment.reason}</span>
+                        <div className={`text-center p-3 rounded-lg ${room.changePercent > 0 ? 'bg-green-50' : 'bg-red-50'}`} style={{borderRadius:'8px'}}>
+                          <div className="text-sm text-gray-600 mb-1">Precio Ajustado</div>
+                          <div className={`text-3xl font-extrabold ${room.changePercent > 0 ? 'text-green-700' : 'text-red-700'} drop-shadow-sm`}>{formatCurrency(room.adjustedPrice)}</div>
                         </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm">
-                            <span className="font-medium text-green-600">
-                              Impacto: {adjustment.impact}
-                            </span>
-                            <span className="text-gray-500">•</span>
-                            <span className="text-blue-600">
-                              {adjustment.bookingsGenerated} reservas generadas
-                            </span>
+                      </div>
+                      {/* Timeline y próxima revisión */}
+                      <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg mb-4" style={{borderRadius:'8px'}}>
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm font-medium">Próxima revisión: {room.nextReview}</span>
+                        </div>
+                        <Progress value={65} className="w-32 h-2" />
+                      </div>
+                      {/* Información expandida */}
+                      {expandedRooms.includes(room.id) && (
+                        <div className="space-y-4 pt-4 border-t">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-medium mb-2 flex items-center gap-2">Razón del Ajuste
+                                {/* Icono representativo */}
+                                {room.adjustmentReason?.toLowerCase().includes('evento') && <Calendar className="h-4 w-4 text-purple-600" />}
+                                {room.adjustmentReason?.toLowerCase().includes('demanda') && <TrendingUp className="h-4 w-4 text-green-600" />}
+                                {room.adjustmentReason?.toLowerCase().includes('competidor') && <Users className="h-4 w-4 text-blue-600" />}
+                              </h4>
+                              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded" style={{borderRadius:'8px'}}>
+                                {room.adjustmentReason}
+                              </p>
+                            </div>
+                            <div>
+                              <h4 className="font-medium mb-2">Impacto Proyectado</h4>
+                              <div className="bg-green-50 p-3 rounded" style={{borderRadius:'8px'}}>
+                                <div className="text-lg font-bold text-green-700">
+                                  {room.impactProjected}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="text-center p-3 border rounded" style={{borderRadius:'8px'}}>
+                              <div className="text-sm text-gray-600">Reservas Hoy</div>
+                              <div className="text-xl font-bold text-blue-600">{room.bookingsToday}</div>
+                            </div>
+                            <div className="text-center p-3 border rounded" style={{borderRadius:'8px'}}>
+                              <div className="text-sm text-gray-600">Reservas Ayer</div>
+                              <div className="text-xl font-bold text-gray-600">{room.bookingsYesterday}</div>
+                            </div>
+                            <div className="text-center p-3 border rounded" style={{borderRadius:'8px'}}>
+                              <div className="text-sm text-gray-600">Variación</div>
+                              <div className={`text-xl font-bold ${room.bookingsToday > room.bookingsYesterday ? 'text-green-600' : 'text-red-600'}`}>{room.bookingsToday > room.bookingsYesterday ? '+' : ''}{room.bookingsToday - room.bookingsYesterday}</div>
+                            </div>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Button size="sm" variant="outline">
                               <Eye className="h-3 w-3 mr-1" />
                               Ver Detalles
                             </Button>
-                            <Badge variant="outline" className="bg-green-100 text-green-700">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Completado
-                            </Badge>
+                            <Button size="sm" variant="outline">
+                              <Settings className="h-3 w-3 mr-1" />
+                              Ajustar Regla
+                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button size="sm" variant="outline" className="text-red-600">
+                                  <Pause className="h-3 w-3 mr-1" />
+                                  Pausar Auto
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Pausar ajustes automáticos para este tipo de habitación</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab 3: Monitoreo de Competencia */}
-          <TabsContent value="competitors" className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2">
-                  <Target className="h-5 w-5" />
-                  <span>Monitoreo de Competencia en Tiempo Real</span>
-                </CardTitle>
-                <CardDescription>
-                  Seguimiento continuo de precios y movimientos de la competencia
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <div className="text-gray-500 mb-4">
-                    <Target className="h-12 w-12 mx-auto mb-2" />
-                    <p>Funcionalidad en desarrollo</p>
                   </div>
-                  <p className="text-sm text-gray-400">
-                    Próximamente: análisis detallado de competidores y respuestas automáticas
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-                  {/* Tab 4: Pronóstico de Precios */}
-        <TabsContent value="forecast" className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5" />
-                  <span>Pronóstico de Precios Automático</span>
-                </CardTitle>
-                <CardDescription>
-                  Predicciones de IA para optimización de precios futuros
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <div className="text-gray-500 mb-4">
-                    <TrendingUp className="h-12 w-12 mx-auto mb-2" />
-                    <p>Funcionalidad en desarrollo</p>
-                  </div>
-                  <p className="text-sm text-gray-400">
-                    Próximamente: pronósticos automáticos de precios optimizados
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </TooltipProvider>
   )
