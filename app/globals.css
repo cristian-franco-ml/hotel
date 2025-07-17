@@ -83,13 +83,99 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-    @apply bg-background text-foreground transition-colors duration-300;
-  }
+/* =============================
+   Paleta de Colores Global - Rate Insight Intelligence
+   ============================= */
+:root {
+  /* Colores principales */
+  --color-primary: #007bff; /* Azul profesional */
+  --color-success: #28a745; /* Verde éxito */
+  --color-warning: #ffc107; /* Amarillo advertencia */
+  --color-danger: #dc3545;  /* Rojo error */
+  --color-info: #17a2b8;    /* Azul info */
+  --color-muted: #6c757d;   /* Gris neutro */
+  --color-bg-main: #ffffff; /* Fondo principal */
+  --color-bg-light: #f8f9fa;/* Fondo general */
+  --color-text-main: #343a40; /* Texto principal */
+  --color-text-secondary: #6c757d; /* Texto secundario */
+}
+
+/* =============================
+   Reset y box-sizing global
+   ============================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Outfit', 'Roboto', 'Open Sans', system-ui, sans-serif;
+  background: var(--color-bg-light);
+  color: var(--color-text-main);
+  line-height: 1.6;
+}
+
+/* =============================
+   Tipografía base
+   ============================= */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.5em;
+}
+p, li, span, label, input, button {
+  font-size: 1rem;
+}
+small {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* =============================
+   Utilidades de color
+   ============================= */
+.text-primary { color: var(--color-primary) !important; }
+.text-success { color: var(--color-success) !important; }
+.text-warning { color: var(--color-warning) !important; }
+.text-danger  { color: var(--color-danger)  !important; }
+.text-info    { color: var(--color-info)    !important; }
+.text-muted   { color: var(--color-muted)   !important; }
+.bg-main      { background: var(--color-bg-main) !important; }
+.bg-light     { background: var(--color-bg-light) !important; }
+
+/* =============================
+   Bordes y fondos
+   ============================= */
+.border-muted { border-color: var(--color-muted) !important; }
+
+/* =============================
+   Comentario: Mantener modularidad y claridad en la paleta y tipografía global
+   ============================= */
+
+/* =============================
+   Variables para modo oscuro
+   ============================= */
+.dark {
+  --color-bg-main: #181c24;         /* Fondo principal oscuro */
+  --color-bg-light: #232a36;        /* Fondo general oscuro */
+  --color-text-main: #f3f6fa;       /* Texto principal claro */
+  --color-text-secondary: #b0b8c1;  /* Texto secundario claro */
+  --color-muted: #3a4252;           /* Gris neutro oscuro */
+  /* Puedes ajustar los demás colores personalizados aquí si es necesario */
 }
