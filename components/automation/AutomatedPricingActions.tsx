@@ -35,7 +35,7 @@ import {
   Settings,
   Shield
 } from 'lucide-react'
-import { fetchPreciosLiveData } from "@/lib/mock-backend";
+// import { fetchPreciosLiveData } from "@/lib/mock-backend";
 
 const AutomatedPricingActions = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('24h')
@@ -45,8 +45,11 @@ const AutomatedPricingActions = () => {
 
   React.useEffect(() => {
     setIsLoading(true);
-    fetchPreciosLiveData()
-      .then(data => {
+    // Cambia la URL a la de tu backend real
+    fetch('http://localhost:5001/api/precios')
+      .then(async res => {
+        if (!res.ok) throw new Error('Error al obtener precios');
+        const data = await res.json();
         setRoomAdjustments(data);
         setIsLoading(false);
       })
@@ -181,8 +184,8 @@ const AutomatedPricingActions = () => {
       <div className="space-y-8">
         {/* Header con Métricas Principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mainMetrics.map((metric, index) => (
-            <Card key={index}>
+          {mainMetrics.map((metric) => (
+            <Card key={metric.label}>
               <CardContent className="p-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -240,14 +243,18 @@ const AutomatedPricingActions = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {roomAdjustments.map((room) => (
-                  <div
-                    key={room.id}
-                    className={
-                      `border rounded-lg overflow-hidden transition-all duration-200 bg-white/90 shadow-md hover:shadow-xl hover:border-blue-400 group`
-                    }
-                    style={{ borderRadius: '8px' }}
-                  >
+                {roomAdjustments.map((room, idx) => {
+                  const key = room.id
+                    ?? (room.roomType && room.triggerTime ? `${room.roomType}-${room.triggerTime}` : undefined)
+                    ?? idx;
+                  return (
+                    <div
+                      key={key}
+                      className={
+                        `border rounded-lg overflow-hidden transition-all duration-200 bg-white/90 shadow-md hover:shadow-xl hover:border-blue-400 group`
+                      }
+                      style={{ borderRadius: '8px' }}
+                    >
                     {/* Header de la habitación */}
                     <div className="p-4 bg-gray-50 border-b" style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}>
                       <div className="flex items-center justify-between">
@@ -386,9 +393,36 @@ const AutomatedPricingActions = () => {
                       )}
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             )}
+          </CardContent>
+        </Card>
+        {/* Historial de Acciones Automáticas Recientes */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-2">
+              <Zap className="h-5 w-5 text-yellow-500" />
+              <span>Acciones Automáticas Recientes</span>
+            </CardTitle>
+            <CardDescription>
+              Últimos ajustes realizados por el sistema de automatización
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {adjustmentHistory.map((ajuste) => (
+                <div key={ajuste.id} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
+                  <span className="font-semibold text-xs text-blue-600 min-w-[60px]">{formatTime(ajuste.timestamp)}</span>
+                  <span className="flex items-center gap-2 flex-1 text-sm font-medium">
+                    {ajuste.action.includes('Aumentó') ? <ArrowUp className="w-4 h-4 text-green-600" /> : <ArrowDown className="w-4 h-4 text-red-500" />}
+                    <span className={ajuste.action.includes('Aumentó') ? 'text-green-700' : 'text-red-700'}>{ajuste.action} {ajuste.roomType}</span>
+                  </span>
+                  <span className="text-xs text-gray-500">{ajuste.impact}</span>
+                  <Badge variant="outline" className="bg-blue-100 text-blue-700">{ajuste.confidence}% conf.</Badge>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

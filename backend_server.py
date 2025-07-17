@@ -6,6 +6,9 @@ import requests
 import json
 from dotenv import load_dotenv
 from datetime import datetime
+from flask import request, jsonify
+from backend.ai_engine.price_optimizer import get_price_recommendations
+# Se asume que la instancia global 'supabase' ya está creada en este archivo
 
 # Load environment variables
 load_dotenv()
@@ -430,6 +433,42 @@ def health_check():
         'status': 'healthy',
         'supabase_configured': bool(SUPABASE_URL and SUPABASE_ANON_KEY)
     })
+
+@app.route("/api/ai/generate-recommendations", methods=["POST"])
+def generate_recommendations():
+    data = request.get_json()
+    hotel_id = data["hotel_id"]
+    hotel_latitude = data["hotel_latitude"]
+    hotel_longitude = data["hotel_longitude"]
+    own_room_types = data["own_room_types"]  # dict: {nombre: id}
+    days_in_advance = data.get("days_in_advance", 60)
+
+    recommendations = get_price_recommendations(
+        supabase,
+        hotel_id,
+        (hotel_latitude, hotel_longitude),
+        own_room_types,
+        days_in_advance
+    )
+    # Guardar en Supabase
+    for rec in recommendations:
+        supabase.table("price_recommendations").insert(rec).execute()
+    return jsonify({"success": True, "recommendations": recommendations})
+
+@app.route("/api/ai/recommendations/<hotel_id>", methods=["GET"])
+def get_recommendations(hotel_id):
+    # Recupera las recomendaciones más recientes para el hotel
+    response = (
+        supabase.table("price_recommendations")
+        .select("*")
+        .eq("hotel_id", hotel_id)
+        .order("generated_at", desc=True)
+        .limit(100)
+        .execute()
+    )
+    if hasattr(response, 'error') and response.error:
+        return jsonify({"success": False, "error": str(response.error)}), 500
+    return jsonify({"success": True, "recommendations": response.data if hasattr(response, 'data') else response})
 
 if __name__ == '__main__':
     app.run(port=5001) 

@@ -15,7 +15,6 @@ import {
   Minimize2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { NavigationBar } from "@/components/ui/NavigationBar";
 import { Sidebar } from '@/components/ui/sidebar';
 
 interface EnhancedLayoutProps {
@@ -88,19 +87,7 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
   const unreadAlertsCount = alerts.filter(alert => alert.type === 'warning' || alert.type === 'error').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 transition-colors duration-300 flex flex-col">
-      {/* Navigation Bar - Barra de navegación principal (hasta arriba) */}
-      <NavigationBar 
-        active={activeTab || currentSection} 
-        onChange={(key) => {
-          if (onTabChange) {
-            onTabChange(key);
-          } else {
-            handleSectionChange(key);
-          }
-        }}
-      />
-
+    <div className="min-h-screen bg-background transition-colors duration-300 flex">
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
         <div 
@@ -109,144 +96,16 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
         />
       )}
 
-      {/* Main Layout with Sidebar and Content */}
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <Sidebar currentSection={currentSection} onSectionChange={handleSectionChange} />
+      {/* Sidebar */}
+      <Sidebar currentSection={currentSection} onSectionChange={handleSectionChange} />
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center justify-between px-4 py-3">
-            {/* Left Section */}
-            <div className="flex items-center space-x-4">
-              {/* Title */}
-              <div className="flex flex-col">
-                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {title || 'Hotel Dashboard'}
-                </h1>
-                {subtitle && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {subtitle}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Right Section */}
-            <div className="flex items-center space-x-2">
-              {/* Search */}
-              <Button variant="ghost" size="sm">
-                <Search className="h-4 w-4" />
-              </Button>
-
-              {/* Fullscreen */}
-              <Button variant="ghost" size="sm" onClick={handleFullscreen}>
-                {isFullscreen ? (
-                  <Minimize2 className="h-4 w-4" />
-                ) : (
-                  <Maximize2 className="h-4 w-4" />
-                )}
-              </Button>
-
-              {/* Notifications */}
-              <div className="relative">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative"
-                >
-                  <Bell className="h-4 w-4" />
-                  {unreadAlertsCount > 0 && (
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0"
-                    >
-                      {unreadAlertsCount}
-                    </Badge>
-                  )}
-                </Button>
-
-                {/* Notifications Dropdown */}
-                {showNotifications && (
-                  <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                    <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="font-medium text-gray-900 dark:text-white">
-                        Notificaciones
-                      </h3>
-                    </div>
-                    <div className="max-h-64 overflow-y-auto">
-                      {alerts.length > 0 ? (
-                        alerts.map((alert) => (
-                          <div key={alert.id} className="p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                            <div className="flex items-start space-x-2">
-                              <div className={cn(
-                                'w-2 h-2 rounded-full mt-2 flex-shrink-0',
-                                alert.type === 'error' ? 'bg-red-500' :
-                                alert.type === 'warning' ? 'bg-yellow-500' :
-                                alert.type === 'success' ? 'bg-green-500' : 'bg-blue-500'
-                              )} />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {alert.title}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {alert.message}
-                                </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                  {alert.timestamp}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                          No hay notificaciones
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Theme Switcher */}
-              <ThemeSwitcher />
-
-              {/* Settings */}
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-
-              {/* Profile */}
-              <Button variant="ghost" size="sm">
-                <UserCircle className="h-4 w-4" />
-              </Button>
-
-              {/* Custom Actions */}
-              {headerActions}
-            </div>
-          </div>
-
-          {/* Breadcrumbs */}
-          <div className="px-4 pb-3">
-            <SmartBreadcrumb
-              currentSection={currentSection}
-              currentSubSection={currentSubSection}
-              currentItem={currentItem}
-              onNavigate={handleSectionChange}
-            />
-          </div>
-        </header>
-
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
         {/* Main Content Area */}
         <main className="flex-1 p-4 lg:p-6 space-y-6">
           {children}
         </main>
       </div>
     </div>
-  </div>
   );
 }; 

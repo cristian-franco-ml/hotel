@@ -1,331 +1,120 @@
 "use client"
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Activity,
-  Settings,
-  DollarSign,
-  Brain,
-  TrendingUp,
-  Hotel,
-  RefreshCw,
-  AlertCircle,
-  CheckCircle,
-  Loader2,
-  Zap,
-  Target,
-  Lightbulb,
-  Shield,
-  Clock,
-  BarChart3,
-  Bot,
-  Gauge
-} from "lucide-react";
-import { useLiveData } from "@/hooks/use-live-data";
-
-// Importar los nuevos componentes especializados
+import React from "react";
 import AutomationDashboard from "./automation/AutomationDashboard";
 import StrategyRulesEngine from "./automation/StrategyRulesEngine";
 import AutomatedPricingActions from "./automation/AutomatedPricingActions";
 import MarketIntelligence from "./automation/MarketIntelligence";
 import PerformanceForecasts from "./automation/PerformanceForecasts";
 import CompetitiveComparison from "./automation/CompetitiveComparison";
-import { EnhancedFilters } from "./EnhancedFilters";
-import { ThemeSwitcher } from "./theme-switcher";
+import ResumenGeneralSistema from "./automation/ResumenGeneralSistema";
+import SubscriptionTab from "./subscription/SubscriptionTab";
+import { HotelsManagement } from "./HotelsManagement";
 
 interface EnhancedTabbedDashboardProps {
- 
+  activeTab: string;
 }
 
-export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = () => {
-  const [activeTab, setActiveTab] = useState("automation-status");
-  const [currentFilters, setCurrentFilters] = useState<any>(null);
-  const [automationMode, setAutomationMode] = useState<"full-auto" | "supervised" | "manual">("supervised");
-  
-  const { 
-    hotels, 
-    events, 
-    eventsEventbrite,
-    eventsTijuanaEventos,
-    analytics, 
-    metadata, 
-    loading, 
-    error, 
-    refreshHotels, 
-    refreshEvents, 
-    refreshTijuanaEventos,
-    refreshAll,
-    hasData
-  } = useLiveData();
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN'
-    }).format(price);
-  };
-
-  const getStatusIcon = () => {
-    if (loading) return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
-    if (error) return <AlertCircle className="h-4 w-4 text-red-500" />;
-    if (hasData) return <CheckCircle className="h-4 w-4 text-green-500" />;
-    return <AlertCircle className="h-4 w-4 text-yellow-500" />;
-  };
-
-  const getStatusText = () => {
-    if (loading) return "Actualizando datos automáticos...";
-    if (error) return "Error en sistema automático";
-    if (hasData) return "Sistema RMS activo";
-    return "Sistema en espera";
-  };
-
-  const getAutomationModeColor = () => {
-    switch (automationMode) {
-      case "full-auto": return "text-green-600 bg-green-50 border-green-200";
-      case "supervised": return "text-blue-600 bg-blue-50 border-blue-200";
-      case "manual": return "text-gray-600 bg-gray-50 border-gray-200";
-    }
-  };
-
-  const getAutomationModeLabel = () => {
-    switch (automationMode) {
-      case "full-auto": return "Automático Completo";
-      case "supervised": return "Supervisado";
-      case "manual": return "Manual";
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-800 dark:to-blue-900 font-inter antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
-      {/* Header Rediseñado para RMS */}
-      <nav className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-4 px-6 flex items-center justify-between sticky top-0 z-20 border-b border-blue-100 dark:border-gray-700 transition-colors duration-300">
-        <div className="flex items-center">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg">
-              <Bot className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                Rate Insight Intelligence
-              </h1>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Revenue Management System Automatizado
-              </p>
-            </div>
+export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = ({ activeTab }) => {
+  // Renderiza solo la sección correspondiente a la pestaña activa
+  switch (activeTab) {
+    case "resumen":
+      return <ResumenGeneralSistema />;
+    case "analisis":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3v18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M7 17V9m4 8V5m4 12v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Análisis <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de análisis detallados estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
           </div>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          {/* Estado del Sistema de Automatización */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 text-sm">
-              {getStatusIcon()}
-              <span className="text-gray-600 dark:text-gray-400">{getStatusText()}</span>
-            </div>
-            
-            {/* Modo de Automatización */}
-            <Badge variant="outline" className={getAutomationModeColor()}>
-              <Gauge className="w-3 h-3 mr-1" />
-              {getAutomationModeLabel()}
-            </Badge>
+        </section>
+      );
+    case "estrategias":
+      return <StrategyRulesEngine />;
+    case "precio":
+      return <AutomatedPricingActions />;
+    case "mercado":
+      return <MarketIntelligence />;
+    case "desempeno":
+      return <PerformanceForecasts />;
+    case "competencia":
+      return <CompetitiveComparison />;
+    case "suscripcion":
+      return <SubscriptionTab />;
+    case "hoteles":
+      return <HotelsManagement />;
+    case "favoritos":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Favoritos <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de favoritos estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
           </div>
-          
-          {/* Indicadores de Datos */}
-          {hasData && (
-            <div className="flex items-center space-x-2">
-              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                <Hotel className="w-3 h-3 mr-1" />
-                {hotels.length} Hoteles
-              </Badge>
-              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
-                <Target className="w-3 h-3 mr-1" />
-                {eventsTijuanaEventos.length} Eventos
-              </Badge>
-            </div>
-          )}
-          
-          {/* Control de Actualización */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={refreshAll}
-            disabled={loading}
-            className="flex items-center space-x-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>Sincronizar</span>
-          </Button>
-          
-          <ThemeSwitcher />
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Nueva Navegación de 5 Pestañas RMS */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" defaultValue="automation-status">
-          <TabsList className="grid w-full grid-cols-6 mb-6 h-14 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-1">
-            <TabsTrigger 
-              value="automation-status" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <Activity className="w-5 h-5" />
-              <span className="text-xs font-medium">Dashboard de Estado</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="strategy-rules" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <Settings className="w-5 h-5" />
-              <span className="text-xs font-medium">Estrategia & Reglas</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="automated-pricing" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <DollarSign className="w-5 h-5" />
-              <span className="text-xs font-medium">Pricing Automático</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="market-intelligence" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <Brain className="w-5 h-5" />
-              <span className="text-xs font-medium">Market Intelligence</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="performance-forecasts" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-xs font-medium">Performance & Forecasts</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="competitive-comparison" 
-              className="flex flex-col items-center gap-1 h-12 data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-transparent hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200 rounded-md"
-            >
-              <Target className="w-5 h-5" />
-              <span className="text-xs font-medium">Comparación Simple</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Filtros Globales Mejorados */}
-          <div className="mb-6">
-            <EnhancedFilters
-              onFiltersChange={setCurrentFilters}
-              onRefresh={refreshAll}
-              isLoading={loading}
-              lastUpdated={metadata?.scraped_at}
-            />
+        </section>
+      );
+    case "filtros":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M8 12h8M10 16h4M6 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Panel de Filtros <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de filtros avanzados estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
           </div>
-
-          {/* 1. Dashboard de Estado - Centro de Comando */}
-          <TabsContent value="automation-status" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
-                  <Activity className="w-6 h-6 text-white" />
-                </div>
-                Dashboard de Estado del Sistema
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Centro de comando para monitorear y supervisar todas las operaciones automatizadas
-              </p>
-            </div>
-            
-            <AutomationDashboard />
-          </TabsContent>
-
-          {/* 2. Estrategia y Reglas - Motor de Decisiones */}
-          <TabsContent value="strategy-rules" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-purple-500 to-violet-500 rounded-lg">
-                  <Settings className="w-6 h-6 text-white" />
-                </div>
-                Motor de Estrategias y Reglas
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Configuración y gestión de los parámetros que guían las decisiones automatizadas
-              </p>
-            </div>
-            
-            <StrategyRulesEngine />
-          </TabsContent>
-
-          {/* 3. Pricing Automático - Gestión de Precios */}
-          <TabsContent value="automated-pricing" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-white" />
-                </div>
-                Sistema de Pricing Automático
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Visualización y gestión de todos los ajustes de precios automatizados
-              </p>
-            </div>
-            
-            <AutomatedPricingActions />
-          </TabsContent>
-
-          {/* 4. Market Intelligence - Análisis de Demanda */}
-          <TabsContent value="market-intelligence" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
-                  <Brain className="w-6 h-6 text-white" />
-                </div>
-                Inteligencia de Mercado Automatizada
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Análisis automatizado de demanda, eventos y factores externos que impactan el mercado
-              </p>
-            </div>
-            
-            <MarketIntelligence />
-          </TabsContent>
-
-          {/* 5. Performance y Forecasts - Seguimiento de Efectividad */}
-          <TabsContent value="performance-forecasts" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-white" />
-                </div>
-                Performance y Forecasting Automático
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Seguimiento de efectividad de decisiones automáticas vs predicciones y ROI de automatización
-              </p>
-            </div>
-            
-            <PerformanceForecasts />
-          </TabsContent>
-
-          {/* 6. Comparación Competitiva Simple - Para Todos */}
-          <TabsContent value="competitive-comparison" className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                🏆 Comparación Simple con la Competencia
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                ¡Fácil de entender! Cómo nos comparamos con otros hoteles y por qué ajustamos nuestros precios
-              </p>
-            </div>
-            
-            <CompetitiveComparison />
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
-  );
+        </section>
+      );
+    case "tendencias":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="1.5" fill="currentColor"/><circle cx="11" cy="13" r="1.5" fill="currentColor"/><circle cx="19" cy="5" r="1.5" fill="currentColor"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Tendencias <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de tendencias estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
+          </div>
+        </section>
+      );
+    case "eventos":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Gestión de Eventos <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de gestión y visualización de eventos estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
+          </div>
+        </section>
+      );
+    case "alertas":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Centro de Alertas <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de alertas estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
+          </div>
+        </section>
+      );
+    case "configuracion":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Configuración <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de configuración estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
+          </div>
+        </section>
+      );
+    case "ayuda":
+      return (
+        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
+          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
+            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></span>
+            <h2 className="text-2xl font-bold text-center">Centro de Ayuda <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
+            <p className="text-muted-foreground text-center">La sección de ayuda y documentación estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
+          </div>
+        </section>
+      );
+    default:
+      return <ResumenGeneralSistema />;
+  }
 }; 

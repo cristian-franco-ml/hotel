@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { CheckCircle, AlertTriangle, Pause, Eye, TrendingUp, DollarSign, Zap, Users, Shield, Activity, ArrowUpRight, Check, XCircle, Info, Clock, Loader2, ArrowDown, ArrowUp } from "lucide-react";
 import { useLiveData } from "@/hooks/use-live-data";
 import { fetchResumenData, Periodo } from "@/lib/mock-backend";
+import { ActiveHotelContext } from "@/components/AppShell";
 
 // =============================
 // Componente principal: Resumen General del Sistema (dinámico y responsivo)
@@ -28,20 +29,22 @@ const ResumenGeneralSistema = () => {
   const [error, setError] = useState<string | null>(null);
   const [resumen, setResumen] = useState<any>(null);
 
-  // Cargar datos al montar y cuando cambia el periodo
+  const { activeHotel } = React.useContext(ActiveHotelContext);
+
+  // Cargar datos al montar y cuando cambia el periodo o el hotel activo
   React.useEffect(() => {
     setLoading(true);
     setError(null);
     fetchResumenData(periodo)
       .then(data => {
-        setResumen(data);
+        setResumen(data || null);
         setLoading(false);
       })
       .catch(err => {
         setError('Error al obtener datos');
         setLoading(false);
       });
-  }, [periodo]);
+  }, [periodo, activeHotel]);
 
   // Loader y error
   if (loading) {
@@ -58,6 +61,14 @@ const ResumenGeneralSistema = () => {
         <AlertTriangle className="w-10 h-10 text-red-500 mb-4" />
         <span className="text-lg text-red-600">{error}</span>
         <Button onClick={() => setPeriodo(periodo)} className="mt-4">Reintentar</Button>
+      </div>
+    );
+  }
+  if (!resumen) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px]">
+        <AlertTriangle className="w-10 h-10 text-yellow-500 mb-4" />
+        <span className="text-lg text-muted-foreground">No hay datos disponibles para este periodo.</span>
       </div>
     );
   }
@@ -123,7 +134,7 @@ const ResumenGeneralSistema = () => {
         </CardTitle>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {resumen?.modulos?.map((mod: any, i: number) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm" style={{borderRadius:'8px'}}>
+            <div key={mod.id || mod.nombre || i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm" style={{borderRadius:'8px'}}>
               <span className={`w-4 h-4 rounded-full ${mod.estado === "Activo" ? "bg-green-500" : mod.estado === "No hay alertas" ? "bg-yellow-400" : "bg-blue-500"}`}></span>
               <span className="font-medium flex-1">{mod.nombre}</span>
               <span className="text-xs text-muted-foreground">{mod.estado}</span>
@@ -149,7 +160,7 @@ const ResumenGeneralSistema = () => {
               color = 'text-green-700';
             }
             return (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
+              <div key={accion.id || accion.fecha + accion.descripcion || i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
                 <span className="font-semibold text-xs text-blue-600 min-w-[60px]">{accion.fecha}</span>
                 <span className="flex items-center gap-2 flex-1 text-sm font-medium">
                   {icon}

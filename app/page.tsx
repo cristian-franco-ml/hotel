@@ -1,11 +1,9 @@
 "use client";
 import { EnhancedLayout } from "@/components/enhanced-layout";
 import { EnhancedTabbedDashboard } from "@/components/enhanced-tabbed-dashboard";
-import React, { useState } from "react";
+import React from "react";
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState("resumen");
-
+export default function Home({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) {
   return (
     <EnhancedLayout
       currentSection={activeTab}

@@ -103,13 +103,15 @@ interface TrendSparklinesProps {
   title?: string;
   className?: string;
   onItemClick?: (item: TrendSparklineData) => void;
+  myHotelName?: string;
 }
 
 export const TrendSparklines: React.FC<TrendSparklinesProps> = ({
   data,
   title = "Tendencias de Precios",
   className,
-  onItemClick
+  onItemClick,
+  myHotelName
 }) => {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("es-MX", {
@@ -149,54 +151,49 @@ export const TrendSparklines: React.FC<TrendSparklinesProps> = ({
               </h4>
               
               <div className="space-y-2">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className={cn(
-                      "flex items-center justify-between p-3 rounded-lg transition-all duration-200",
-                      "hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer",
-                      onItemClick && "hover:shadow-sm"
-                    )}
-                    onClick={() => onItemClick?.(item)}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {item.label}
-                          </p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {formatCurrency(item.value)}
-                          </p>
-                        </div>
-                        
-                        <div className="flex items-center space-x-3">
-                          <Sparkline
-                            data={item.data}
-                            color={getTrendColor(item.trend)}
-                            showTrend={false}
-                          />
-                          
-                          <div className="text-right">
-                            <div className="flex items-center space-x-1">
-                              {item.trend === 'up' && <TrendingUp className="w-3 h-3 text-red-600" />}
-                              {item.trend === 'down' && <TrendingDown className="w-3 h-3 text-green-600" />}
-                              {item.trend === 'flat' && <Minus className="w-3 h-3 text-gray-600" />}
-                              <span className={cn(
-                                'text-xs font-medium',
-                                item.trend === 'up' ? 'text-red-600' :
-                                item.trend === 'down' ? 'text-green-600' : 'text-gray-600'
-                              )}>
-                                {item.change > 0 ? '+' : ''}{item.change.toFixed(1)}%
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-500">vs ayer</p>
-                          </div>
+                {items.map((item) => {
+                  let label = item.label;
+                  if (myHotelName && (item.label === myHotelName || item.label === 'Mi Hotel')) {
+                    label = `${myHotelName} vs Competencia`;
+                  }
+                  return (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 p-4 rounded-xl border border-border bg-background dark:bg-background shadow-md transition-all duration-200",
+                        "hover:bg-gray-50 dark:hover:bg-muted/40 cursor-pointer",
+                        onItemClick && "hover:shadow-lg"
+                      )}
+                      onClick={() => onItemClick?.(item)}
+                      style={{ minHeight: 120 }}
+                    >
+                      <div className="flex-1 flex flex-col gap-1 min-w-0">
+                        <span className="text-xs font-semibold text-muted-foreground tracking-wide uppercase mb-0.5">{label}</span>
+                        <span className="text-2xl font-extrabold text-primary leading-tight">{formatCurrency(item.value)}</span>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          {item.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />}
+                          {item.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />}
+                          {item.trend === 'flat' && <Minus className="w-4 h-4 text-gray-400 dark:text-gray-500" />}
+                          <span className={cn(
+                            'text-sm font-medium',
+                            item.trend === 'up' ? 'text-green-600 dark:text-green-400' :
+                            item.trend === 'down' ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
+                          )}>
+                            {item.change > 0 ? '+' : ''}{item.change.toFixed(1)}% <span className="text-xs text-muted-foreground font-normal ml-1">vs ayer</span>
+                          </span>
                         </div>
                       </div>
+                      <div className="flex items-center justify-end md:justify-center flex-shrink-0 w-full md:w-auto max-w-[140px]">
+                        <Sparkline
+                          data={item.data}
+                          color={getTrendColor(item.trend)}
+                          showTrend={false}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}

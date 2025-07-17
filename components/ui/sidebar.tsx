@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft, ChevronLeft, ChevronRight, Home, BarChart3, Calendar, Settings, HelpCircle, Building2, TrendingUp, Filter, Bell, Bookmark } from "lucide-react"
+import { PanelLeft, ChevronLeft, ChevronRight, Home, BarChart3, Calendar, Settings, HelpCircle, Building2, TrendingUp, Filter, Bell, Bookmark, ChevronDown } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { ActiveHotelContext } from "../AppShell";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -156,132 +157,7 @@ const SidebarProvider = React.forwardRef<
 )
 SidebarProvider.displayName = "SidebarProvider"
 
-interface SidebarProps {
-  className?: string;
-  isCollapsed?: boolean;
-  onToggle?: (collapsed: boolean) => void;
-  currentSection?: string;
-  onSectionChange?: (section: string) => void;
-}
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  href?: string;
-  badge?: string;
-  isActive?: boolean;
-}
-
-const navigationItems: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'analysis', label: 'Análisis', icon: BarChart3, badge: '2' },
-  { id: 'hotels', label: 'Hoteles', icon: Building2 },
-  { id: 'events', label: 'Eventos', icon: Calendar },
-  { id: 'trends', label: 'Tendencias', icon: TrendingUp },
-  { id: 'filters', label: 'Filtros', icon: Filter },
-  { id: 'bookmarks', label: 'Favoritos', icon: Bookmark },
-  { id: 'alerts', label: 'Alertas', icon: Bell, badge: '3' },
-  { id: 'settings', label: 'Configuración', icon: Settings },
-  { id: 'help', label: 'Ayuda', icon: HelpCircle },
-];
-
-export const Sidebar: React.FC<SidebarProps> = ({
-  className,
-  isCollapsed = false,
-  onToggle,
-  currentSection = 'dashboard',
-  onSectionChange
-}) => {
-  const [collapsed, setCollapsed] = React.useState(isCollapsed);
-
-  const handleToggle = () => {
-    const newCollapsed = !collapsed;
-    setCollapsed(newCollapsed);
-    onToggle?.(newCollapsed);
-  };
-
-  const handleSectionClick = (sectionId: string) => {
-    onSectionChange?.(sectionId);
-  };
-
-  return (
-    <div className={cn(
-      'relative flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300',
-      collapsed ? 'w-16' : 'w-64',
-      className
-    )}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-        {!collapsed && (
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            <span className="font-semibold text-gray-900 dark:text-white">
-              Hotel Dashboard
-            </span>
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleToggle}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 py-4">
-        <div className="space-y-1 px-2">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentSection === item.id;
-            
-            return (
-              <Button
-                key={item.id}
-                variant={isActive ? 'default' : 'ghost'}
-                className={cn(
-                  'w-full justify-start h-10 px-3',
-                  collapsed && 'justify-center px-2',
-                  isActive && 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700'
-                )}
-                onClick={() => handleSectionClick(item.id)}
-              >
-                <Icon className={cn('h-4 w-4', !collapsed && 'mr-3')} />
-                {!collapsed && (
-                  <>
-                    <span className="flex-1 text-left">{item.label}</span>
-                    {item.badge && (
-                      <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
-                )}
-              </Button>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-        {!collapsed && (
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            <p>Hotel Dashboard v2.0</p>
-            <p>Correlación de eventos</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+// Elimina la declaración y exportación de Sidebar y símbolos relacionados
 
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -759,29 +635,148 @@ const SidebarMenuSubButton = React.forwardRef<
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 
-export {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInput,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSkeleton,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarSeparator,
-  SidebarTrigger,
-  useSidebar,
-}
+// Restaurar Sidebar clásico para navegación lateral
+export const Sidebar: React.FC<{ currentSection?: string; onSectionChange?: (section: string) => void }> = ({ currentSection = 'resumen', onSectionChange }) => {
+  const { activeHotel, setActiveHotel } = React.useContext(ActiveHotelContext);
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const hotelList = [
+    "Hotel Lucerna",
+    "Hotel Caesars",
+    "Real Inn Tijuana by Camino Real Hoteles",
+    "Gamma Tijuana",
+    "Holiday Inn Express & Suites - Tijuana Otay by IHG"
+  ];
+  // Elementos principales
+  const mainNavItems = [
+    { id: 'resumen', label: 'Resumen', icon: Home },
+    { id: 'analisis', label: 'Análisis', icon: BarChart3 },
+    { id: 'hoteles', label: 'Hoteles', icon: Building2 },
+    { id: 'eventos', label: 'Eventos', icon: Calendar },
+    { id: 'tendencias', label: 'Tendencias', icon: TrendingUp },
+    { id: 'filtros', label: 'Filtros', icon: Filter },
+    { id: 'favoritos', label: 'Favoritos', icon: Bookmark },
+    { id: 'alertas', label: 'Alertas', icon: Bell },
+  ];
+  // Elementos secundarios
+  const secondaryNavItems = [
+    { id: 'configuracion', label: 'Configuración', icon: Settings },
+    { id: 'ayuda', label: 'Ayuda', icon: HelpCircle },
+  ];
+  return (
+    <aside
+      className="w-64 min-h-screen bg-sidebar-background border-r border-sidebar-border flex flex-col"
+      aria-label="Barra lateral de utilidades y gestión"
+      role="navigation"
+    >
+      {/* Título principal y selector de hotel */}
+      <div className="flex flex-col gap-2 p-4 border-b border-sidebar-border">
+        <span className="font-bold text-lg text-sidebar-foreground font-sans tracking-tight select-none" aria-label="Hotel Dashboard">Hotel Dashboard</span>
+        {/* Selector de hotel activo */}
+        <div className="relative mt-1">
+          <button
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-accent text-accent-foreground font-semibold shadow-sm border border-border hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--sidebar-ring))]"
+            onClick={() => setDropdownOpen((open) => !open)}
+            aria-label="Seleccionar hotel activo"
+            type="button"
+            tabIndex={0}
+          >
+            <span className="truncate max-w-[140px]">{activeHotel}</span>
+            <ChevronDown className="w-4 h-4" aria-hidden="true" />
+          </button>
+          {dropdownOpen && (
+            <div className="absolute left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-lg z-50 dark:bg-popover">
+              {hotelList.map((hotel) => (
+                <button
+                  key={hotel}
+                  className={`w-full text-left px-4 py-2 hover:bg-accent hover:text-accent-foreground transition-colors rounded-md ${hotel === activeHotel ? 'bg-primary text-primary-foreground font-bold' : ''}`}
+                  onClick={() => { setActiveHotel(hotel); setDropdownOpen(false); }}
+                  type="button"
+                  tabIndex={0}
+                >
+                  {hotel}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Sección de navegación principal */}
+      <nav className="flex-1 py-4 flex flex-col justify-between" aria-label="Gestión y análisis">
+        <div className="flex flex-col gap-2 px-2">
+          <span className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-2 pt-1 pb-2 select-none" aria-label="Gestión y Análisis">Gestión y Análisis</span>
+          {mainNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentSection === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSectionChange?.(item.id)}
+                className={cn(
+                  'flex items-center w-full h-11 px-4 py-2 gap-3 font-sans font-semibold text-base transition-colors duration-150 select-none outline-none',
+                  isActive && 'bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] rounded-lg shadow-sm ring-2 ring-[hsl(var(--sidebar-ring))] ring-offset-0',
+                  !isActive && 'text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-accent-foreground))] rounded-lg',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--sidebar-ring))]',
+                  'hover:shadow-xs',
+                )}
+                style={{
+                  fontFamily: 'Inter, Outfit, Roboto, Open Sans, system-ui, sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: '-0.01em',
+                }}
+                aria-current={isActive ? 'page' : undefined}
+                tabIndex={0}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                <span className="flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {/* Separador visual */}
+        <div className="my-3 border-t border-sidebar-border mx-4" aria-hidden="true" />
+        {/* Sección de utilidades */}
+        <div className="flex flex-col gap-2 px-2 pb-2">
+          <span className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-2 pt-1 pb-2 select-none" aria-label="Utilidades">Utilidades</span>
+          {secondaryNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentSection === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSectionChange?.(item.id)}
+                className={cn(
+                  'flex items-center w-full h-11 px-4 py-2 gap-3 font-sans font-semibold text-base transition-colors duration-150 select-none outline-none',
+                  isActive && 'bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] rounded-lg shadow-sm ring-2 ring-[hsl(var(--sidebar-ring))] ring-offset-0',
+                  !isActive && 'text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-accent-foreground))] rounded-lg',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--sidebar-ring))]',
+                  'hover:shadow-xs',
+                )}
+                style={{
+                  fontFamily: 'Inter, Outfit, Roboto, Open Sans, system-ui, sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: '-0.01em',
+                }}
+                aria-current={isActive ? 'page' : undefined}
+                tabIndex={0}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                <span className="flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+      {/* Footer */}
+      <div className="p-4 border-t border-sidebar-border text-xs text-muted-foreground select-none" aria-label="Versión y créditos">
+        <p>Hotel Dashboard v2.0</p>
+        <p>Correlación de eventos</p>
+      </div>
+    </aside>
+  );
+};
