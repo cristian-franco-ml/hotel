@@ -653,7 +653,6 @@ export const Sidebar: React.FC<{ currentSection?: string; onSectionChange?: (sec
     { id: 'hoteles', label: 'Hoteles', icon: Building2 },
     { id: 'eventos', label: 'Eventos', icon: Calendar },
     { id: 'tendencias', label: 'Tendencias', icon: TrendingUp },
-    { id: 'filtros', label: 'Filtros', icon: Filter },
     { id: 'favoritos', label: 'Favoritos', icon: Bookmark },
     { id: 'alertas', label: 'Alertas', icon: Bell },
   ];

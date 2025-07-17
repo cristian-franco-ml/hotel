@@ -17,6 +17,7 @@ import {
 import { ActiveHotelContext } from "@/components/AppShell";
 import { TrendSparklines } from "@/components/charts/TrendSparklines";
 import { ChartContainer } from "@/components/ui/chart";
+import { cn } from "@/lib/utils";
 
 // TypeScript interfaces
 interface HotelData {
@@ -317,17 +318,17 @@ const CompetitiveComparison = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-8 px-2 md:px-0">
+    <div id="competencia-section" className="w-full max-w-5xl mx-auto py-8 px-2 md:px-0">
       {/* Card: Posicionamiento Actual */}
       <div className="mb-8">
-        <div className="rounded-xl p-6 bg-card border border-border shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-6 dark:bg-card dark:border-border">
+        <div className="rounded-xl p-4 sm:p-6 bg-card border border-border shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-6 dark:bg-card dark:border-border">
           <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2">
               <span className="text-primary">Nuestro Posicionamiento Actual</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mt-2">
               {/* Posición Competitiva */}
-              <div className="bg-background dark:bg-background rounded-lg p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-background dark:bg-background rounded-lg p-3 sm:p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -345,7 +346,7 @@ const CompetitiveComparison = () => {
                 <div className="text-xs text-muted-foreground mt-1">Líder en {myHotel?.position === 1 ? 'el mercado' : 'su métrica principal'}</div>
               </div>
               {/* Market Share */}
-              <div className="bg-background dark:bg-background rounded-lg p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-background dark:bg-background rounded-lg p-3 sm:p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -369,7 +370,7 @@ const CompetitiveComparison = () => {
                 />
               </div>
               {/* ADR vs Competencia */}
-              <div className="bg-background dark:bg-background rounded-lg p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-background dark:bg-background rounded-lg p-3 sm:p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -393,7 +394,7 @@ const CompetitiveComparison = () => {
                 />
               </div>
               {/* Ocupación vs Competencia */}
-              <div className="bg-background dark:bg-background rounded-lg p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-background dark:bg-background rounded-lg p-3 sm:p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -417,7 +418,7 @@ const CompetitiveComparison = () => {
                 />
               </div>
               {/* RevPAR vs Competencia */}
-              <div className="bg-background dark:bg-background rounded-lg p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
+              <div className="bg-background dark:bg-background rounded-lg p-3 sm:p-4 border border-border text-center flex flex-col items-center justify-center shadow-sm">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -445,73 +446,132 @@ const CompetitiveComparison = () => {
         </div>
       </div>
       {/* Matriz Comparativa */}
-      <div className="rounded-xl bg-card border border-border shadow-md overflow-x-auto dark:bg-card dark:border-border mb-8">
-        <table className="w-full min-w-[700px]">
-          <thead>
-            <tr className="border-b border-border bg-muted dark:bg-muted">
-              <th className="p-4 text-left font-semibold text-muted-foreground">Ranking</th>
-              <th className="p-4 text-left font-semibold text-muted-foreground">Establecimiento</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">Pricing</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">Ocupa</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">Satisfacción</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">RevPAR</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">Market Share</th>
-              <th className="p-4 text-center font-semibold text-muted-foreground">Ajuste</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockHotels.map((hotel) => (
-              <tr
-                key={hotel.id}
-                className={`border-b border-border transition-colors ${hotel.isOurs ? 'bg-blue-50 dark:bg-blue-900/40' : 'hover:bg-muted dark:hover:bg-muted/60'}`}
-              >
-                <td className="p-4 font-bold text-primary">#{hotel.position}</td>
-                <td className="p-4 font-semibold flex items-center gap-2">
-                  {hotel.name}
+      {/* Responsive: Cards en móvil, tabla en desktop */}
+      <div className="mb-8">
+        {/* Desktop Table */}
+        <div className="hidden md:block rounded-xl bg-card border border-border shadow-md overflow-x-auto dark:bg-card dark:border-border">
+          <table className="w-full min-w-[700px]">
+            <thead>
+              <tr className="border-b border-border bg-muted dark:bg-muted">
+                <th className="p-4 text-left font-semibold text-muted-foreground">Ranking</th>
+                <th className="p-4 text-left font-semibold text-muted-foreground">Establecimiento</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">Pricing</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">Ocupa</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">Satisfacción</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">RevPAR</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">Market Share</th>
+                <th className="p-4 text-center font-semibold text-muted-foreground">Ajuste</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockHotels.map((hotel) => (
+                <tr
+                  key={hotel.id}
+                  className={`border-b border-border transition-colors ${hotel.isOurs ? 'bg-blue-50 dark:bg-blue-900/40' : 'hover:bg-muted dark:hover:bg-muted/60'}`}
+                >
+                  <td className="p-4 font-bold text-primary">#{hotel.position}</td>
+                  <td className="p-4 font-semibold flex items-center gap-2">
+                    {hotel.name}
+                    {hotel.isOurs && (
+                      <span className="text-xs bg-blue-600 text-white rounded px-2 py-0.5 font-semibold ml-1">NUESTRO</span>
+                    )}
+                  </td>
+                  {/* Pricing */}
+                  <td className="p-4 text-center font-bold">
+                    <span className={getMetricColor(hotel.price, avgPrice)}>${hotel.price}</span>
+                  </td>
+                  {/* Ocupación */}
+                  <td className="p-4 text-center font-bold">
+                    <span className={getMetricColor(hotel.occupancy, avgOcc)}>{hotel.occupancy}%</span>
+                    <Progress value={hotel.occupancy} className="h-2 mt-1 w-20 mx-auto" />
+                  </td>
+                  {/* Satisfacción */}
+                  <td className="p-4 text-center font-bold">
+                    <StarRating value={hotel.satisfaction} />
+                  </td>
+                  {/* RevPAR */}
+                  <td className="p-4 text-center font-bold">
+                    <span className={getMetricColor(myHotel?.revpar ?? 0, avgRevpar)}>${myHotel?.revpar}</span>
+                  </td>
+                  {/* Market Share */}
+                  <td className="p-4 text-center font-bold">
+                    <span className={getMetricColor(hotel.marketShare, avgMarketShare)}>{hotel.marketShare}%</span>
+                    <Progress value={hotel.marketShare} className="h-2 mt-1 w-20 mx-auto" />
+                  </td>
+                  {/* Ajuste */}
+                  <td className="p-4 text-center font-bold">
+                    <span className={(myHotel?.lastAdjustmentChange ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : (myHotel?.lastAdjustmentChange ?? 0) < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-500'}>
+                      {(myHotel?.lastAdjustmentChange ?? 0) > 0 ? <ArrowUp className="inline w-4 h-4 text-green-600 ml-1" /> : (myHotel?.lastAdjustmentChange ?? 0) < 0 ? <ArrowDown className="inline w-4 h-4 text-red-600 ml-1" /> : <Minus className="inline w-4 h-4 text-gray-400 ml-1" />}
+                      {myHotel?.lastAdjustment}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Mobile Cards */}
+        <div className="md:hidden flex flex-col gap-4">
+          {mockHotels.map((hotel) => (
+            <div
+              key={hotel.id}
+              className={`rounded-xl border border-border shadow-md p-4 flex flex-col gap-2 ${hotel.isOurs ? 'bg-blue-50 dark:bg-blue-900/40' : 'bg-card dark:bg-card'}`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-primary text-lg">#{hotel.position}</span>
+                  <span className="font-semibold text-base">{hotel.name}</span>
                   {hotel.isOurs && (
                     <span className="text-xs bg-blue-600 text-white rounded px-2 py-0.5 font-semibold ml-1">NUESTRO</span>
                   )}
-                </td>
-                {/* Pricing */}
-                <td className="p-4 text-center font-bold">
-                  <span className={getMetricColor(hotel.price, avgPrice)}>${hotel.price}</span>
-                </td>
-                {/* Ocupación */}
-                <td className="p-4 text-center font-bold">
-                  <span className={getMetricColor(hotel.occupancy, avgOcc)}>{hotel.occupancy}%</span>
-                  <Progress value={hotel.occupancy} className="h-2 mt-1 w-20 mx-auto" />
-                </td>
-                {/* Satisfacción */}
-                <td className="p-4 text-center font-bold">
+                </div>
+                {/* Botón para ver detalles (puede abrir un modal o expandir detalles) */}
+                <button className="text-xs text-primary underline ml-2 px-2 py-1 rounded hover:bg-primary/10 active:bg-primary/20">Ver más</button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">Precio</span>
+                  <span className={cn('font-bold text-base', getMetricColor(hotel.price, avgPrice))}>${hotel.price}</span>
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">Ocupación</span>
+                  <span className={cn('font-bold text-base', getMetricColor(hotel.occupancy, avgOcc))}>{hotel.occupancy}%</span>
+                  <Progress value={hotel.occupancy} className="h-2 mt-1 w-full" />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">RevPAR</span>
+                  <span className={cn('font-bold text-base', getMetricColor(myHotel?.revpar ?? 0, avgRevpar))}>${myHotel?.revpar}</span>
+                </div>
+                {/* Satisfacción y Market Share como detalles secundarios */}
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">Satisfacción</span>
                   <StarRating value={hotel.satisfaction} />
-                </td>
-                {/* RevPAR */}
-                <td className="p-4 text-center font-bold">
-                  <span className={getMetricColor(myHotel?.revpar ?? 0, avgRevpar)}>${myHotel?.revpar}</span>
-                </td>
-                {/* Market Share */}
-                <td className="p-4 text-center font-bold">
-                  <span className={getMetricColor(hotel.marketShare, avgMarketShare)}>{hotel.marketShare}%</span>
-                  <Progress value={hotel.marketShare} className="h-2 mt-1 w-20 mx-auto" />
-                </td>
-                {/* Ajuste */}
-                <td className="p-4 text-center font-bold">
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">Market Share</span>
+                  <span className={cn('font-bold text-base', getMetricColor(hotel.marketShare, avgMarketShare))}>{hotel.marketShare}%</span>
+                  <Progress value={hotel.marketShare} className="h-2 mt-1 w-full" />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs text-muted-foreground">Ajuste</span>
                   <span className={(myHotel?.lastAdjustmentChange ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : (myHotel?.lastAdjustmentChange ?? 0) < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-500'}>
                     {(myHotel?.lastAdjustmentChange ?? 0) > 0 ? <ArrowUp className="inline w-4 h-4 text-green-600 ml-1" /> : (myHotel?.lastAdjustmentChange ?? 0) < 0 ? <ArrowDown className="inline w-4 h-4 text-red-600 ml-1" /> : <Minus className="inline w-4 h-4 text-gray-400 ml-1" />}
                     {myHotel?.lastAdjustment}
                   </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       {/* Tendencias de Mercado */}
-      <div className="mt-10">
-        <div className="flex items-center gap-4 mb-4">
-          <button onClick={() => setRange('7d')} className={`px-3 py-1 rounded-full text-xs font-semibold border ${range === '7d' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Últimos 7 días</button>
-          <button onClick={() => setRange('30d')} className={`px-3 py-1 rounded-full text-xs font-semibold border ${range === '30d' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Últimos 30 días</button>
-          <button onClick={() => setRange('custom')} className={`px-3 py-1 rounded-full text-xs font-semibold border ${range === 'custom' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Personalizado</button>
+      <div className="mt-10" id="tendencias-mercado-section">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button onClick={() => setRange('7d')} className={`flex-1 sm:flex-none px-3 py-2 rounded-full text-xs font-semibold border ${range === '7d' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Últimos 7 días</button>
+            <button onClick={() => setRange('30d')} className={`flex-1 sm:flex-none px-3 py-2 rounded-full text-xs font-semibold border ${range === '30d' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Últimos 30 días</button>
+            <button onClick={() => setRange('custom')} className={`flex-1 sm:flex-none px-3 py-2 rounded-full text-xs font-semibold border ${range === 'custom' ? 'bg-primary text-white' : 'bg-background text-primary border-primary'}`}>Personalizado</button>
+          </div>
           {/* Aquí podrías agregar un datepicker si range === 'custom' */}
         </div>
         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">

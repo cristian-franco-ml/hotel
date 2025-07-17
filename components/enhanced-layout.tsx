@@ -58,15 +58,7 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
 
   // Handle responsive behavior
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        // setSidebarCollapsed(true); // Removed as sidebar is removed
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // Sidebar eliminado, no es necesario manejar colapso
   }, []);
 
   const handleFullscreen = () => {
@@ -87,21 +79,12 @@ export const EnhancedLayout: React.FC<EnhancedLayoutProps> = ({
   const unreadAlertsCount = alerts.filter(alert => alert.type === 'warning' || alert.type === 'error').length;
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300 flex">
-      {/* Mobile Menu Overlay */}
-      {showMobileMenu && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setShowMobileMenu(false)}
-        />
-      )}
+    <div className="min-h-screen bg-background transition-colors duration-300 flex flex-col">
+      {/* Botón hamburguesa solo en móvil (se mantendrá para el navbar) */}
+      {/* Aquí se eliminará el sidebar, el menú hamburguesa se usará para el navbar */}
 
-      {/* Sidebar */}
-      <Sidebar currentSection={currentSection} onSectionChange={handleSectionChange} />
-
-      {/* Main Content */}
+      {/* Main Content - ahora ocupa todo el ancho */}
       <div className="flex-1 flex flex-col">
-        {/* Main Content Area */}
         <main className="flex-1 p-4 lg:p-6 space-y-6">
           {children}
         </main>

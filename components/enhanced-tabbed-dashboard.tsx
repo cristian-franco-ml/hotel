@@ -34,8 +34,6 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
       return <StrategyRulesEngine />;
     case "precio":
       return <AutomatedPricingActions />;
-    case "mercado":
-      return <MarketIntelligence />;
     case "desempeno":
       return <PerformanceForecasts />;
     case "competencia":
@@ -54,16 +52,6 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
           </div>
         </section>
       );
-    case "filtros":
-      return (
-        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
-          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
-            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M8 12h8M10 16h4M6 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span>
-            <h2 className="text-2xl font-bold text-center">Panel de Filtros <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
-            <p className="text-muted-foreground text-center">La sección de filtros avanzados estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
-          </div>
-        </section>
-      );
     case "tendencias":
       return (
         <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
@@ -75,15 +63,7 @@ export const EnhancedTabbedDashboard: React.FC<EnhancedTabbedDashboardProps> = (
         </section>
       );
     case "eventos":
-      return (
-        <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
-          <div className="bg-card shadow-md rounded-lg p-8 flex flex-col items-center gap-4 border border-border dark:bg-card dark:border-border" style={{maxWidth: 480}}>
-            <span className="text-4xl text-blue-500"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
-            <h2 className="text-2xl font-bold text-center">Gestión de Eventos <span className="text-base font-normal text-muted-foreground">(En Construcción)</span></h2>
-            <p className="text-muted-foreground text-center">La sección de gestión y visualización de eventos estará disponible próximamente.<br/>Mientras tanto, puedes explorar las demás funcionalidades del dashboard.</p>
-          </div>
-        </section>
-      );
+      return <MarketIntelligence />;
     case "alertas":
       return (
         <section className="flex flex-col items-center justify-center min-h-[400px] w-full">
