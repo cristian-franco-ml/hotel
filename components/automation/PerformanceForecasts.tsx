@@ -237,11 +237,18 @@ const PerformanceForecasts = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'excelente': return 'bg-green-100 text-green-700'
-      case 'muy_buena': return 'bg-blue-100 text-blue-700'
-      case 'buena': return 'bg-yellow-100 text-yellow-700'
-      case 'regular': return 'bg-orange-100 text-orange-700'
-      default: return 'bg-gray-100 text-gray-700'
+      case 'excelente':
+      case 'muy_alta':
+        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+      case 'muy_buena':
+      case 'alta':
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+      case 'buena':
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+      case 'regular':
+        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
+      default:
+        return 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300'
     }
   }
 
@@ -282,7 +289,7 @@ const PerformanceForecasts = () => {
         {/* Header con Métricas Principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {mainMetrics.map((metric, index) => (
-            <Card key={index}>
+            <Card key={index} className="dark:bg-card">
               <CardContent className="p-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -348,7 +355,7 @@ const PerformanceForecasts = () => {
 
           {/* Tab 1: Precisión de Forecasts */}
           <TabsContent value="accuracy" className="space-y-6">
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center space-x-2">
                   <Target className="h-5 w-5" />
@@ -396,7 +403,7 @@ const PerformanceForecasts = () => {
                           </h4>
                           <div className="space-y-2">
                             {forecast.factors.map((factor, i) => (
-                              <div key={i} className="flex items-center space-x-2 text-sm p-2 bg-blue-50 rounded">
+                              <div key={i} className="flex items-center space-x-2 text-sm p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
                                 <CheckCircle className="h-3 w-3 text-blue-600 flex-shrink-0" />
                                 <span>{factor}</span>
                               </div>
@@ -441,7 +448,7 @@ const PerformanceForecasts = () => {
 
           {/* Tab 2: ROI & Performance */}
           <TabsContent value="roi" className="space-y-6">
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center space-x-2">
                   <DollarSign className="h-5 w-5" />
@@ -513,11 +520,11 @@ const PerformanceForecasts = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-white rounded border">
+                    <div className="text-center p-3 bg-white dark:bg-card rounded border">
                       <div className="text-2xl font-bold text-green-600">$661,850</div>
                       <div className="text-sm text-gray-600">Beneficio Neto Mensual</div>
                     </div>
-                    <div className="text-center p-3 bg-white rounded border">
+                    <div className="text-center p-3 bg-white dark:bg-card rounded border">
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
@@ -534,7 +541,7 @@ const PerformanceForecasts = () => {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <div className="text-center p-3 bg-white rounded border">
+                    <div className="text-center p-3 bg-white dark:bg-card rounded border">
                       <div className="text-2xl font-bold text-purple-600">5.2 meses</div>
                       <div className="text-sm text-gray-600">Período de Recuperación</div>
                     </div>
@@ -546,7 +553,7 @@ const PerformanceForecasts = () => {
 
           {/* Tab 3: Confianza & Validación */}
           <TabsContent value="trust" className="space-y-6">
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center space-x-2">
                   <Shield className="h-5 w-5" />
@@ -582,15 +589,15 @@ const PerformanceForecasts = () => {
                         <div>
                           <h4 className="font-medium mb-3">Registro de Validaciones</h4>
                           <div className="space-y-2">
-                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                            <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-card rounded">
                               <span className="text-sm">Total Validaciones</span>
                               <span className="font-semibold">{metric.validations}</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-green-50 rounded">
+                            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded">
                               <span className="text-sm">Validaciones Exitosas</span>
                               <span className="font-semibold text-green-600">{metric.successes}</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-blue-50 rounded">
+                            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
                               <span className="text-sm">Tasa de Éxito</span>
                               <span className="font-semibold text-blue-600">
                                 {((metric.successes / metric.validations) * 100).toFixed(1)}%
@@ -609,7 +616,7 @@ const PerformanceForecasts = () => {
                               </div>
                               <Progress value={metric.score} className="h-2" />
                             </div>
-                            <div className="text-center p-3 bg-blue-50 rounded">
+                            <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
                               <div className="flex items-center justify-center space-x-2">
                                 {metric.score >= 90 ? (
                                   <Star className="h-4 w-4 text-yellow-500" />
@@ -662,7 +669,7 @@ const PerformanceForecasts = () => {
 
           {/* Tab 4: Forecasts Futuros */}
           <TabsContent value="future" className="space-y-6">
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
@@ -702,7 +709,7 @@ const PerformanceForecasts = () => {
                           </h4>
                           <div className="space-y-2">
                             {forecast.factors.map((factor, i) => (
-                              <div key={i} className="flex items-center space-x-2 text-sm p-2 bg-purple-50 rounded">
+                              <div key={i} className="flex items-center space-x-2 text-sm p-2 bg-purple-50 dark:bg-purple-900/20 rounded">
                                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                                 <span>{factor}</span>
                               </div>

@@ -37,10 +37,10 @@ const MetricCard: React.FC<MetricCardProps> = ({
   className 
 }) => {
   const statusConfig = {
-    good: 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10',
-    warning: 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/10',
-    critical: 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10',
-    neutral: 'border-gray-200 dark:border-gray-700'
+    good: 'border-card bg-primary/10 dark:bg-primary/20',
+    warning: 'border-card bg-yellow-100 dark:bg-yellow-900/10',
+    critical: 'border-card bg-red-100 dark:bg-red-900/10',
+    neutral: 'border-card'
   };
 
   return (

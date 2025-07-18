@@ -356,11 +356,11 @@ const AutomationDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <div className="text-2xl font-bold text-green-600">24/7</div>
                   <div className="text-sm text-gray-600">Tiempo Activo</div>
                 </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -377,11 +377,11 @@ const AutomationDashboard = () => {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                   <div className="text-2xl font-bold text-purple-600">156</div>
                   <div className="text-sm text-gray-600">Ajustes Hoy</div>
                 </div>
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                   <div className="text-2xl font-bold text-orange-600">+18%</div>
                   <div className="text-sm text-gray-600">ROI vs Manual</div>
                 </div>
@@ -473,7 +473,7 @@ const AutomationDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -500,7 +500,7 @@ const AutomationDashboard = () => {
                   </Tooltip>
                 </div>
                 
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -516,7 +516,7 @@ const AutomationDashboard = () => {
                   </Tooltip>
                 </div>
                 
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -532,7 +532,7 @@ const AutomationDashboard = () => {
                   </Tooltip>
                 </div>
                 
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>

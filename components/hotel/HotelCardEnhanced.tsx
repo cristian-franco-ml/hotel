@@ -81,7 +81,7 @@ export const HotelCardEnhanced = memo<HotelCardEnhancedProps>(({
   return (
     <Card 
       className={cn(
-        "group relative transition-all duration-300 hover:shadow-xl border-l-4 bg-white dark:bg-gray-800 cursor-pointer",
+        "group relative transition-all duration-300 hover:shadow-xl border-l-4 bg-card border-card cursor-pointer",
         isPrincipal ? "border-l-blue-500 ring-2 ring-blue-200" : hasAdjustment ? "border-l-orange-400" : "border-l-gray-300",
         isSelected && "ring-2 ring-blue-400",
         className
@@ -91,7 +91,7 @@ export const HotelCardEnhanced = memo<HotelCardEnhancedProps>(({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1 flex-1">
-            <CardTitle className="text-lg font-bold text-gray-800 dark:text-gray-200">
+            <CardTitle className="text-lg font-bold text-card-foreground">
               {formatHotelName(name)}
             </CardTitle>
             <div className="flex items-center space-x-2">

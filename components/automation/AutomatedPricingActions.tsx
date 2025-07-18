@@ -412,7 +412,7 @@ const AutomatedPricingActions = () => {
           <CardContent>
             <div className="space-y-3">
               {adjustmentHistory.map((ajuste) => (
-                <div key={ajuste.id} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
+                <div key={ajuste.id} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 dark:bg-card hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
                   <span className="font-semibold text-xs text-blue-600 min-w-[60px]">{formatTime(ajuste.timestamp)}</span>
                   <span className="flex items-center gap-2 flex-1 text-sm font-medium">
                     {ajuste.action.includes('Aumentó') ? <ArrowUp className="w-4 h-4 text-green-600" /> : <ArrowDown className="w-4 h-4 text-red-500" />}

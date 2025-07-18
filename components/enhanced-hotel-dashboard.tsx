@@ -198,19 +198,19 @@ export default function EnhancedHotelDashboard() {
 
   // Calculate average prices for comparison
   const getAveragePrice = (hotelName: string, roomType: string) => {
-    const hotel = hotels.find((h) => h.name === hotelName)
-    const room = hotel?.rooms.find((r) => r.type === roomType)
+    const hotel: any = hotels.find((h) => h.name === hotelName)
+    const room: any = hotel?.rooms.find((r) => r.type === roomType)
     if (!room) return 0
 
-    const relevantPrices = room.prices.filter((p) => fechasFiltradas.includes(p.date))
-    const sum = relevantPrices.reduce((acc, p) => acc + p.price, 0)
+    const relevantPrices = room.prices.filter((p: any) => fechasFiltradas.includes(p.date))
+    const sum = relevantPrices.reduce((acc: any, p: any) => acc + p.price, 0)
     return sum / relevantPrices.length
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <div className="flex items-center justify-between">
@@ -353,7 +353,7 @@ export default function EnhancedHotelDashboard() {
                     strokeWidth={3}
                     name={`${primaryHotel} (Principal)`}
                   />
-                  {competitorHotels.slice(0, 4).map((hotel, index) => (
+                  {competitorHotels.slice(0, 4).map((hotel: any, index: any) => (
                     <Line
                       key={hotel.name}
                       type="monotone"
@@ -373,7 +373,7 @@ export default function EnhancedHotelDashboard() {
         {/* Hotel Comparison Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Primary Hotel Card */}
-          <Card className="rounded-2xl shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200">
+          <Card className="rounded-2xl shadow-lg bg-gradient-to-br from-card via-primary/10 to-card dark:from-card dark:via-primary/20 dark:to-card border-2 border-card">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -381,7 +381,7 @@ export default function EnhancedHotelDashboard() {
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{primaryHotel}</h3>
+                    <h3 className="text-lg font-semibold text-card-foreground">{primaryHotel}</h3>
                     <Badge className="bg-blue-600 text-white">Hotel Principal</Badge>
                   </div>
                 </div>
@@ -444,7 +444,7 @@ export default function EnhancedHotelDashboard() {
           </Card>
 
           {/* Competitor Hotels: solo mostrar precios base para comparar */}
-          {competitorHotels.map((hotel) => (
+          {competitorHotels.map((hotel: any) => (
             <Card key={hotel.name} className="rounded-2xl shadow-md bg-white hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">

@@ -99,7 +99,7 @@ const ResumenGeneralSistema = () => {
         </div>
       </div>
       {/* Banner de Estado del Sistema */}
-      <div className="rounded-xl p-4 flex items-center gap-4 shadow-md bg-gradient-to-r from-green-400/80 via-green-300/60 to-green-200/60" style={{borderRadius: '8px'}}>
+      <div className="rounded-xl p-4 flex items-center gap-4 shadow-md bg-gradient-to-r from-green-400/80 via-green-300/60 to-green-200/60 dark:bg-green-900/60" style={{borderRadius: '8px'}}>
         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/30">
           <span className="w-3 h-3 rounded-full bg-green-500 block"></span>
         </span>
@@ -108,19 +108,19 @@ const ResumenGeneralSistema = () => {
       </div>
       {/* Cards de Métricas Clave */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg" style={{boxShadow:'0 2px 12px 0 rgba(16, 185, 129, 0.08)', borderRadius:'8px'}}>
+        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg dark:bg-card" style={{boxShadow:'0 2px 12px 0 rgba(16, 185, 129, 0.08)', borderRadius:'8px'}}>
           <div className="mb-2"><ArrowUpRight className="text-green-600 w-8 h-8" /></div>
           <div className="text-4xl font-extrabold mb-1 text-green-700">{resumen?.ingresos}</div>
           <div className="font-semibold text-base mb-1">Más Ingresos</div>
           <div className="text-sm text-muted-foreground text-center">vs. Precios Manuales</div>
         </Card>
-        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg" style={{boxShadow:'0 2px 12px 0 rgba(59, 130, 246, 0.08)', borderRadius:'8px'}}>
+        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg dark:bg-card" style={{boxShadow:'0 2px 12px 0 rgba(59, 130, 246, 0.08)', borderRadius:'8px'}}>
           <div className="mb-2"><Check className="text-blue-600 w-8 h-8" /></div>
           <div className="text-4xl font-extrabold mb-1 text-blue-700">{resumen?.precision}</div>
           <div className="font-semibold text-base mb-1">Precisión de Precios</div>
           <div className="text-sm text-muted-foreground text-center">Excelente</div>
         </Card>
-        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg" style={{boxShadow:'0 2px 12px 0 rgba(234, 179, 8, 0.08)', borderRadius:'8px'}}>
+        <Card className="p-6 flex flex-col items-center justify-center shadow-md rounded-lg dark:bg-card" style={{boxShadow:'0 2px 12px 0 rgba(234, 179, 8, 0.08)', borderRadius:'8px'}}>
           <div className="mb-2"><Zap className="text-yellow-500 w-8 h-8" /></div>
           <div className="text-4xl font-extrabold mb-1 text-yellow-600">{resumen?.ajustes}</div>
           <div className="font-semibold text-base mb-1">Ajustes Automáticos</div>
@@ -128,7 +128,7 @@ const ResumenGeneralSistema = () => {
         </Card>
       </div>
       {/* Estado de Módulos del Sistema */}
-      <Card className="p-4 shadow-md mt-6 rounded-lg" style={{borderRadius:'8px'}}>
+      <Card className="p-4 shadow-md mt-6 rounded-lg dark:bg-card" style={{borderRadius:'8px'}}>
         <CardTitle className="mb-4 flex items-center gap-2 text-lg font-bold">
           <Activity className="w-5 h-5 text-primary" /> Estado de Módulos del Sistema
         </CardTitle>
@@ -143,7 +143,7 @@ const ResumenGeneralSistema = () => {
         </div>
       </Card>
       {/* Acciones Automáticas Recientes */}
-      <Card className="p-4 shadow-md mt-6 rounded-lg" style={{borderRadius:'8px'}}>
+      <Card className="p-4 shadow-md mt-6 rounded-lg dark:bg-card" style={{borderRadius:'8px'}}>
         <CardTitle className="mb-4 flex items-center gap-2 text-lg font-bold">
           <Zap className="w-5 h-5 text-yellow-500" /> Acciones Automáticas Recientes
         </CardTitle>
@@ -160,7 +160,7 @@ const ResumenGeneralSistema = () => {
               color = 'text-green-700';
             }
             return (
-              <div key={accion.id || accion.fecha + accion.descripcion || i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
+              <div key={accion.id || accion.fecha + accion.descripcion || i} className="flex items-center gap-3 p-3 rounded-lg border shadow-sm bg-white/80 dark:bg-card hover:shadow-lg transition-shadow duration-200" style={{borderRadius:'8px', lineHeight:'1.6'}}>
                 <span className="font-semibold text-xs text-blue-600 min-w-[60px]">{accion.fecha}</span>
                 <span className="flex items-center gap-2 flex-1 text-sm font-medium">
                   {icon}

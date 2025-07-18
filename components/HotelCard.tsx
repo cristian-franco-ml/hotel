@@ -28,13 +28,13 @@ export function HotelCard({
   comparacionCaro,
 }: HotelCardProps) {
   return (
-    <Card className={`rounded-2xl shadow-md border transition-shadow w-full max-w-sm mx-auto ${principal ? "bg-blue-50 border-blue-400" : "bg-white border-gray-200"}`}>
+    <Card className={`rounded-2xl shadow-md border transition-shadow w-full max-w-sm mx-auto bg-card border-card`}>
       <CardHeader className="flex flex-row items-center gap-3 pb-2">
         <div className={`rounded-xl p-2 flex items-center justify-center ${principal ? "bg-blue-600" : "bg-gray-300"}`}>
           <Building2 className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{nombre}</h3>
+          <h3 className="text-lg font-semibold text-card-foreground">{nombre}</h3>
           {principal && <Badge className="bg-blue-600 text-white ml-2">Hotel Principal</Badge>}
         </div>
       </CardHeader>

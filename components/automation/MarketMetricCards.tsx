@@ -10,13 +10,13 @@ interface MetricCardProps {
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({ icon, label, value, description }) => (
-  <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800/80">
+  <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 bg-card border-card">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">{label}</CardTitle>
+      <CardTitle className="text-sm font-medium text-card-foreground">{label}</CardTitle>
       <div className="text-blue-500 dark:text-blue-400">{icon}</div>
     </CardHeader>
     <CardContent>
-      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
+      <div className="text-2xl font-bold text-card-foreground">{value}</div>
       <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
     </CardContent>
   </Card>
